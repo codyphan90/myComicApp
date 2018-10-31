@@ -49,6 +49,8 @@ import {UtilsModule} from "../utils/utils.module";
     ShortcutComponent,
     LayoutSwitcherComponent,
   ]
+    // ,
+    // providers: [UserService]
 })
 export class SmartadminLayoutModule{
 

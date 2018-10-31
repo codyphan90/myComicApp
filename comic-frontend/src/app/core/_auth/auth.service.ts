@@ -25,7 +25,7 @@ export class AuthService extends AbstractService {
             headers: headers
         };
 
-        return this.http.post(environment.auth_service.user_validation_endpoint, {
+        return this.http.post(environment.user_service.user_validation_endpoint, {
             userName: username,
             password: password
         }, options);

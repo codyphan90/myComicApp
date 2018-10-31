@@ -55,27 +55,27 @@
             </header>
 
             <fieldset>
-              <section>
-                <label class="input"> <i class="icon-append fa fa-user"></i>
-                  <input type="text" name="username" placeholder="Username">
-                  <b class="tooltip tooltip-bottom-right">Needed to enter the website</b> </label>
-              </section>
+              <!--<section>-->
+                <!--<label class="input"> <i class="icon-append fa fa-user"></i>-->
+                  <!--<input [(ngModel)]="username" type="text" name="username" placeholder="Username">-->
+                  <!--<b class="tooltip tooltip-bottom-right">Needed to enter the website</b> </label>-->
+              <!--</section>-->
 
               <section>
                 <label class="input"> <i class="icon-append fa fa-envelope"></i>
-                  <input type="email" name="email" placeholder="Email address">
+                  <input [(ngModel)]="username" type="email" name="email" placeholder="Email address">
                   <b class="tooltip tooltip-bottom-right">Needed to verify your account</b> </label>
               </section>
 
               <section>
                 <label class="input"> <i class="icon-append fa fa-lock"></i>
-                  <input type="password" name="password" placeholder="Password" id="password">
+                  <input [(ngModel)]="password" type="password" name="password" placeholder="Password" id="password">
                   <b class="tooltip tooltip-bottom-right">Don't forget your password</b> </label>
               </section>
 
               <section>
                 <label class="input"> <i class="icon-append fa fa-lock"></i>
-                  <input type="password" name="passwordConfirm" placeholder="Confirm password">
+                  <input [(ngModel)]="passwordConfirm" type="password" name="passwordConfirm" placeholder="Confirm password">
                   <b class="tooltip tooltip-bottom-right">Don't forget your password</b> </label>
               </section>
             </fieldset>
@@ -84,12 +84,12 @@
               <div class="row">
                 <section class="col col-6">
                   <label class="input">
-                    <input type="text" name="firstname" placeholder="First name">
+                    <input [(ngModel)]="firstname" type="text" name="firstname" placeholder="First name">
                   </label>
                 </section>
                 <section class="col col-6">
                   <label class="input">
-                    <input type="text" name="lastname" placeholder="Last name">
+                    <input [(ngModel)]="lastname" type="text" name="lastname" placeholder="Last name">
                   </label>
                 </section>
               </div>

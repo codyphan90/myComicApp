@@ -29,6 +29,9 @@ export class LoginComponent implements OnInit {
           } else {
             alert(response.exceptionMessage);
           }
+      },
+      error => {
+          alert("Has error!");
       })
   }
 
