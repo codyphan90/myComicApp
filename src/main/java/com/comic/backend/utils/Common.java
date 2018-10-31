@@ -14,6 +14,8 @@ import org.simplejavamail.mailer.MailerBuilder;
 import org.simplejavamail.mailer.config.TransportStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.xml.bind.DatatypeConverter;
+import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,26 +30,33 @@ public class Common {
 
     private static Map<String, String> configMap = null;
 
-    public Map<String, String> getConfigMap() {
-        if (configMap == null) {
-            configMap = new HashMap<>();
-            List<ConfigurationEntity> configurationEntities = configurationRepository.findAll();
-            for (ConfigurationEntity configurationEntity : configurationEntities) {
-                configMap.put(configurationEntity.getKeyName(), configurationEntity.getKeyValue());
-            }
+    public void loadConfig() {
+        configMap = new HashMap<>();
+        List<ConfigurationEntity> configurationEntities = configurationRepository.findAll();
+        for (ConfigurationEntity configurationEntity : configurationEntities) {
+            configMap.put(configurationEntity.getKeyName(), configurationEntity.getKeyValue());
         }
-        return configMap;
+    }
+
+    public static String getValueByName(String name) {
+        if (configMap == null) {
+            new Common().loadConfig();
+        }
+        return configMap != null ? configMap.get(name) : null;
     }
 
 
     public static boolean sendMail(EmailSendType emailSendType, List<EmailTo> tos, String content) {
 
         try {
-            Common common = new Common();
+            if (configMap == null) {
+                Common common = new Common();
+                common.loadConfig();
+            }
 
             EmailPopulatingBuilder emailPopulatingBuilder =
                     EmailBuilder.startingBlank()
-                            .from(common.getConfigMap().get(EmailConfigKey.SMTP_FROM_NAME.getName()), common.getConfigMap().get(EmailConfigKey.SMTP_FROM_ADDRESS.getName()));
+                            .from(getValueByName(EmailConfigKey.SMTP_FROM_NAME.getName()), getValueByName(EmailConfigKey.SMTP_FROM_ADDRESS.getName()));
 
             for (EmailTo emailTo : tos) {
                 emailPopulatingBuilder = emailPopulatingBuilder.to(emailTo.getName(), emailTo.getAddress());
@@ -57,14 +66,14 @@ public class Common {
             String contentText = "";
 
             if (EmailSendType.VALIDATE_EMAIL_ADDRESS.equals(emailSendType)) {
-                subject = common.getConfigMap().get(EmailConfigKey.SMTP_SUBJECT_EMAIL_VALIDATE.getName());
-                contentText = common.getConfigMap().get(EmailConfigKey.SMTP_CONTENT_EMAIL_VALIDATE.getName()).replaceAll("@@link@@", content);
+                subject = getValueByName(EmailConfigKey.SMTP_SUBJECT_EMAIL_VALIDATE.getName());
+                contentText = getValueByName(EmailConfigKey.SMTP_CONTENT_EMAIL_VALIDATE.getName()).replaceAll("@@link@@", content);
             } else if (EmailSendType.RESET_PASSWORD.equals(emailSendType)) {
-                subject = common.getConfigMap().get(EmailConfigKey.SMTP_SUBJECT_RESET_PASSWORD.getName());
-                contentText = common.getConfigMap().get(EmailConfigKey.SMTP_CONTENT_RESET_PASSWORD.getName()).replaceAll("@@password@@", content);
+                subject = getValueByName(EmailConfigKey.SMTP_SUBJECT_RESET_PASSWORD.getName());
+                contentText = getValueByName(EmailConfigKey.SMTP_CONTENT_RESET_PASSWORD.getName()).replaceAll("@@password@@", content);
             }
 
-            if ("HTML".equalsIgnoreCase(common.getConfigMap().get(EmailConfigKey.SMTP_CONTENT_TYPE.getName()))) {
+            if ("HTML".equalsIgnoreCase(getValueByName(EmailConfigKey.SMTP_CONTENT_TYPE.getName()))) {
                 emailPopulatingBuilder = emailPopulatingBuilder.withSubject(subject).withHTMLText(contentText);
             } else {
                 emailPopulatingBuilder = emailPopulatingBuilder.withSubject(subject).withPlainText(contentText);
@@ -73,8 +82,8 @@ public class Common {
             Email email = emailPopulatingBuilder.buildEmail();
 
             MailerBuilder.MailerRegularBuilder mailerRegularBuilder = MailerBuilder
-                    .withSMTPServer(common.getConfigMap().get(EmailConfigKey.SMTP_HOST.getName()), Integer.parseInt(common.getConfigMap().get(EmailConfigKey.SMTP_PORT.getName())), common.getConfigMap().get(EmailConfigKey.SMTP_USER.getName()), common.getConfigMap().get(EmailConfigKey.SMTP_PASSWORD.getName()))
-                    .withTransportStrategy(common.getTransportStrategy());
+                    .withSMTPServer(getValueByName(EmailConfigKey.SMTP_HOST.getName()), Integer.parseInt(getValueByName(EmailConfigKey.SMTP_PORT.getName())), getValueByName(EmailConfigKey.SMTP_USER.getName()), getValueByName(EmailConfigKey.SMTP_PASSWORD.getName()))
+                    .withTransportStrategy(getTransportStrategy());
             mailerRegularBuilder.buildMailer().sendMail(email);
             return true;
         } catch (Exception e) {
@@ -85,8 +94,22 @@ public class Common {
 
     }
 
-    public TransportStrategy getTransportStrategy() {
-        String name = getConfigMap().get(EmailConfigKey.SMTP_TRANSPORT_STRATEGY.getName());
+    public static String hash(String str, String algorithm) {
+        try {
+            MessageDigest md = MessageDigest.getInstance(algorithm);
+            md.update(str.getBytes());
+            byte[] digest = md.digest();
+            String hash = DatatypeConverter.printHexBinary(digest);
+            return hash;
+        } catch (Exception e) {
+            logger.error("Has error. ", e);
+            return null;
+        }
+
+    }
+
+    public static TransportStrategy getTransportStrategy() {
+        String name = getValueByName(EmailConfigKey.SMTP_TRANSPORT_STRATEGY.getName());
         TransportStrategy transportStrategy = TransportStrategy.SMTP;
         if ("SMTP_TLS".equalsIgnoreCase(name)) {
             transportStrategy = TransportStrategy.SMTP_TLS;
