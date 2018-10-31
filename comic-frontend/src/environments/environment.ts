@@ -1,5 +1,5 @@
 var HOME_URL = 'http://localhost:4200';
-var AUTH_SERVICE_BASE = 'http://localhost:8080';
+var AUTH_SERVICE_BASE = 'http://localhost:8290';
 var LOGIN_ROUTE = '/auth/login';
 
 export const environment = {
