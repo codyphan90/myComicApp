@@ -26,8 +26,18 @@ public class UserService {
 
     @Transactional
     public UserEntity create(UserEntity userEntity) {
-        logger.info("Create new user with userName [{}] and userGroup [{}]", userEntity.getUserName(), userEntity.getGroupId());
+        logger.info("Create new user with userName [{}]", userEntity.getUserName());
         return usersRepository.save(userEntity);
+    }
+    @Transactional
+    public UserEntity update(UserEntity updateUserEntity, Integer userId) {
+        UserEntity oldUserEntity = usersRepository.findByIdEquals(userId);
+        if (oldUserEntity != null) {
+            oldUserEntity = updateUserEntity(oldUserEntity, updateUserEntity);
+            return usersRepository.saveAndFlush(oldUserEntity);
+        } else {
+            return null;
+        }
     }
 
     public String validateUserLogin(LoginRequest request) {
@@ -72,6 +82,14 @@ public class UserService {
                 .setExpiration(expireDate)
                 .signWith(signatureAlgorithm, SECRET_KEY)
                 .compact();
+    }
+
+    private UserEntity updateUserEntity(UserEntity oldUserEntity,UserEntity updateUserEntity) {
+        oldUserEntity.setFirstName(updateUserEntity.getFirstName());
+        oldUserEntity.setLastName(updateUserEntity.getLastName());
+        oldUserEntity.setPassword(updateUserEntity.getPassword());
+        oldUserEntity.setGroupId(updateUserEntity.getGroupId());
+        return oldUserEntity;
     }
 
 }

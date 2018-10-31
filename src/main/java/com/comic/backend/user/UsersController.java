@@ -1,5 +1,6 @@
 package com.comic.backend.user;
 
+import com.comic.backend.constant.MessageConstant;
 import com.comic.backend.constant.UrlConstant;
 import com.comic.backend.reponse.ResponseEntity;
 import com.comic.backend.request.LoginRequest;
@@ -8,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import static com.comic.backend.constant.MessageConstant.*;
 import static com.comic.backend.constant.MessageConstant.SYSTEM_ERROR_MESSAGE;
 
 @CrossOrigin
@@ -30,10 +32,10 @@ public class UsersController {
             } else {
                 userEntity = userService.create(userEntity);
                 logger.info("========== Finish create new user ==========");
-                return new ResponseEntity<>(true, null, userEntity.getId());
+                return new ResponseEntity<>(true, null, CREATE_SUCCESS + userEntity.getId());
             }
         } catch (Exception e) {
-            logger.error(SYSTEM_ERROR_MESSAGE, e.getMessage());
+            logger.error(SYSTEM_ERROR_MESSAGE + e.getMessage());
             return new ResponseEntity<>(false, e.getMessage());
         }
 
@@ -51,7 +53,7 @@ public class UsersController {
                 return new ResponseEntity<>(false, null, null);
             }
         } catch (Exception e) {
-            logger.error(SYSTEM_ERROR_MESSAGE, e.getMessage());
+            logger.error(SYSTEM_ERROR_MESSAGE +  e.getMessage());
             return new ResponseEntity<>(false, e.getMessage());
         }
     }
@@ -62,13 +64,15 @@ public class UsersController {
                           @RequestBody UserEntity userEntity) {
         logger.info("========== Start update user [{}] ==========", userEntity.getUserName());
         try {
-            UserEntity oldUserEntity = userService.getUser(userId);
-            userEntity.setUserName(oldUserEntity.getUserName());
-            userService.create(userEntity);
-            return new ResponseEntity<>(true, null, null);
+            UserEntity updatedUserEntity = userService.update(userEntity, userId);
+            if (updatedUserEntity != null) {
+                return new ResponseEntity<>(true, null, UPDATE_SUCCESS);
+            } else {
+                return new ResponseEntity<>(false, null, USER_NOT_FOUND);
+            }
         } catch (Exception e) {
-            logger.error(SYSTEM_ERROR_MESSAGE, e.getMessage());
-            return new ResponseEntity<>(false, e.getMessage());
+            logger.error(SYSTEM_ERROR_MESSAGE +  e);
+            return new ResponseEntity<>(false, e.getMessage(), null);
         }
 
     }
@@ -87,7 +91,7 @@ public class UsersController {
                 return new ResponseEntity<>(token);
             }
         } catch (Exception e) {
-            logger.error(SYSTEM_ERROR_MESSAGE, e.getMessage());
+            logger.error(SYSTEM_ERROR_MESSAGE + e.getMessage());
             return new ResponseEntity<>(false, e.getMessage());
         }
     }
