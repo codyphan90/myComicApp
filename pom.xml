@@ -84,7 +84,12 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.2</version>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>org.simplejavamail</groupId>
+			<artifactId>simple-java-mail</artifactId>
+			<version>5.0.8</version>
+		</dependency>
 		<!---->
 	</dependencies>
 
