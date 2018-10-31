@@ -17,22 +17,55 @@ public class UsersController {
     private static Logger logger = LogManager.getLogger(UsersController.class);
 
     @Autowired
-    private UsersService usersService;
+    private UserService userService;
 
     @RequestMapping(value = UrlConstant.CREATE_URL, method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity create(@RequestBody UserEntity userEntity) {
-        logger.info("========== Start creating new user ==========",
-                userEntity.getUserName(), userEntity.getGroupId());
+        logger.info("========== Start creating new user ==========");
         try {
-            String exceptionMessage = usersService.validateCreateUser(userEntity);
+            String exceptionMessage = userService.validateCreateUser(userEntity);
             if (exceptionMessage != null) {
                 return new ResponseEntity<>(false, exceptionMessage, null);
             } else {
-                userEntity = usersService.create(userEntity);
+                userEntity = userService.create(userEntity);
                 logger.info("========== Finish create new user ==========");
                 return new ResponseEntity<>(true, null, userEntity.getId());
             }
+        } catch (Exception e) {
+            logger.error(SYSTEM_ERROR_MESSAGE, e.getMessage());
+            return new ResponseEntity<>(false, e.getMessage());
+        }
+
+    }
+
+    @RequestMapping(value = UrlConstant.GET_URL, method = RequestMethod.GET)
+    public @ResponseBody
+    ResponseEntity getUser(@PathVariable("user_id") Integer userId) {
+        logger.info("========== Start getting userId [{}]==========", userId);
+        try {
+            UserEntity userEntity = userService.getUser(userId);
+            if (userEntity != null) {
+                return new ResponseEntity<>(userEntity);
+            } else {
+                return new ResponseEntity<>(false, null, null);
+            }
+        } catch (Exception e) {
+            logger.error(SYSTEM_ERROR_MESSAGE, e.getMessage());
+            return new ResponseEntity<>(false, e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = UrlConstant.UPDATE_URL, method = RequestMethod.PUT)
+    public @ResponseBody
+    ResponseEntity update(@PathVariable("user_id") Integer userId,
+                          @RequestBody UserEntity userEntity) {
+        logger.info("========== Start update user [{}] ==========", userEntity.getUserName());
+        try {
+            UserEntity oldUserEntity = userService.getUser(userId);
+            userEntity.setUserName(oldUserEntity.getUserName());
+            userService.create(userEntity);
+            return new ResponseEntity<>(true, null, null);
         } catch (Exception e) {
             logger.error(SYSTEM_ERROR_MESSAGE, e.getMessage());
             return new ResponseEntity<>(false, e.getMessage());
@@ -45,11 +78,11 @@ public class UsersController {
     ResponseEntity<String> login(@RequestBody LoginRequest request) {
         logger.info("========== Start Login ==========");
         try {
-            String exceptionMessage = usersService.validateUserLogin(request);
+            String exceptionMessage = userService.validateUserLogin(request);
             if (exceptionMessage != null) {
                 return new ResponseEntity<>(false, exceptionMessage);
             } else {
-                String token = usersService.generateToken(request.getUserName());
+                String token = userService.generateToken(request.getUserName());
                 logger.info("========== Finish generate token for user ==========");
                 return new ResponseEntity<>(token);
             }

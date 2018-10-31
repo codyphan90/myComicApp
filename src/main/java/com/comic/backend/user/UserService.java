@@ -1,6 +1,5 @@
 package com.comic.backend.user;
 
-import com.comic.backend.reponse.ResponseEntity;
 import com.comic.backend.request.LoginRequest;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -19,10 +18,8 @@ import static com.comic.backend.constant.SecurityConstant.SECRET_KEY;
 
 
 @Service
-public class UsersService {
-    //asdfasdfasd
-
-    private Logger logger = LogManager.getLogger(UsersService.class);
+public class UserService {
+    private Logger logger = LogManager.getLogger(UserService.class);
 
     @Autowired
     protected UsersRepository usersRepository;
@@ -45,6 +42,10 @@ public class UsersService {
         return null;
     }
 
+    public UserEntity getUser(Integer userId) {
+        return usersRepository.findByIdEquals(userId);
+    }
+
     public String validateCreateUser(UserEntity user) {
         logger.info("validate new userName [{}]", user.getUserName());
 
@@ -53,6 +54,12 @@ public class UsersService {
         Integer entityCheckDuplicate = usersRepository.countByUserName(user.getUserName());
 
         if (entityCheckDuplicate > 0) return String.format(DUPLICATE_EXCEPTION_MESSAGE, "User " + user.getUserName());
+        return null;
+    }
+
+    public String validateUpdateUser(UserEntity user) {
+
+
         return null;
     }
 
