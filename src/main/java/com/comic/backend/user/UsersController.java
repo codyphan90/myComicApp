@@ -96,5 +96,13 @@ public class UsersController {
         }
     }
 
+    @RequestMapping(value = UrlConstant.ACTIVE_URL, method = RequestMethod.POST)
+    public @ResponseBody
+    ResponseEntity<String> active(@PathVariable("user_id") Integer userId) {
+        logger.info("========== Active user id [{}] ==========", userId);
+        userService.validateEmail(userId);
+        return new ResponseEntity<>(true, null, VALIDATE_SUCCESS);
+    }
+
 
 }

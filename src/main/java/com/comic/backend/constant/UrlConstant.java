@@ -9,6 +9,7 @@ public class UrlConstant {
     public static final String UPDATE_URL = "/update/{user_id}";
     public static final String GET_URL = "/get/{user_id}";
     public static final String LOGIN_URL = "/login";
+    public static final String ACTIVE_URL = "/active/{user_id}";
 
 
 }

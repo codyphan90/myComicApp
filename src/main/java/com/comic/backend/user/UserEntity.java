@@ -26,6 +26,9 @@ public class UserEntity {
     @Column(name = "group_id")
     private Integer groupId;
 
+    @Column(name = "is_active")
+    private Boolean isActive;
+
     public Integer getId() {
         return id;
     }
@@ -69,6 +72,14 @@ public class UserEntity {
 
     public void setGroupId(Integer groupId) {
         this.groupId = groupId;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 }
 

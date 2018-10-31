@@ -67,11 +67,6 @@ public class UserService {
         return null;
     }
 
-    public String validateUpdateUser(UserEntity user) {
-
-
-        return null;
-    }
 
     public String generateToken(String userName) {
         logger.info("Generate token for userName [{}] ", userName);
@@ -82,6 +77,12 @@ public class UserService {
                 .setExpiration(expireDate)
                 .signWith(signatureAlgorithm, SECRET_KEY)
                 .compact();
+    }
+
+    public void validateEmail(Integer userId) {
+        UserEntity user = usersRepository.findByIdEquals(userId);
+        user.setActive(true);
+        usersRepository.saveAndFlush(user);
     }
 
     private UserEntity updateUserEntity(UserEntity oldUserEntity,UserEntity updateUserEntity) {

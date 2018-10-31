@@ -8,6 +8,6 @@ public class MessageConstant {
     public static final String SYSTEM_ERROR_MESSAGE = "System error : ";
     public static final String UPDATE_SUCCESS = "Update success";
     public static final String CREATE_SUCCESS = "Create success user id ";
-
+    public static final String VALIDATE_SUCCESS = "Account Validated";
 
 }
