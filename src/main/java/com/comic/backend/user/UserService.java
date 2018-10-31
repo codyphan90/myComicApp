@@ -1,6 +1,8 @@
 package com.comic.backend.user;
 
+import com.comic.backend.constant.SecurityConstant;
 import com.comic.backend.request.LoginRequest;
+import com.comic.backend.utils.Common;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.logging.log4j.LogManager;
@@ -27,6 +29,8 @@ public class UserService {
     @Transactional
     public UserEntity create(UserEntity userEntity) {
         logger.info("Create new user with userName [{}]", userEntity.getUserName());
+        userEntity.setPassword(Common.hash(userEntity.getPassword(), SecurityConstant.PASSWORD_HASH_ALGORITHM));
+        userEntity.setActive(false);
         return usersRepository.save(userEntity);
     }
     @Transactional
@@ -48,7 +52,8 @@ public class UserService {
         UserEntity userEntity = usersRepository.findByUserNameEquals(request.getUserName());
 
         if (userEntity == null) return USER_NAME_OR_PASSWORD_IS_INVALID;
-        if (!request.getPassword().equals(userEntity.getPassword())) return USER_NAME_OR_PASSWORD_IS_INVALID;
+        String loginPassword = Common.hash(request.getPassword(), SecurityConstant.PASSWORD_HASH_ALGORITHM);
+        if (!loginPassword.equals(userEntity.getPassword())) return USER_NAME_OR_PASSWORD_IS_INVALID;
         return null;
     }
 

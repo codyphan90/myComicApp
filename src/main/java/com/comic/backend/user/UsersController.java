@@ -21,7 +21,7 @@ public class UsersController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = UrlConstant.CREATE_URL, method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity create(@RequestBody UserEntity userEntity) {
         logger.info("========== Start creating new user ==========");
@@ -35,7 +35,7 @@ public class UsersController {
                 return new ResponseEntity<>(true, null, CREATE_SUCCESS + userEntity.getId());
             }
         } catch (Exception e) {
-            logger.error(SYSTEM_ERROR_MESSAGE + e.getMessage());
+            logger.error(SYSTEM_ERROR_MESSAGE, e);
             return new ResponseEntity<>(false, e.getMessage());
         }
 
@@ -53,7 +53,7 @@ public class UsersController {
                 return new ResponseEntity<>(false, null, null);
             }
         } catch (Exception e) {
-            logger.error(SYSTEM_ERROR_MESSAGE +  e.getMessage());
+            logger.error(SYSTEM_ERROR_MESSAGE, e);
             return new ResponseEntity<>(false, e.getMessage());
         }
     }
@@ -71,7 +71,7 @@ public class UsersController {
                 return new ResponseEntity<>(false, null, USER_NOT_FOUND);
             }
         } catch (Exception e) {
-            logger.error(SYSTEM_ERROR_MESSAGE +  e);
+            logger.error(SYSTEM_ERROR_MESSAGE, e);
             return new ResponseEntity<>(false, e.getMessage(), null);
         }
 
@@ -91,7 +91,7 @@ public class UsersController {
                 return new ResponseEntity<>(token);
             }
         } catch (Exception e) {
-            logger.error(SYSTEM_ERROR_MESSAGE + e.getMessage());
+            logger.error(SYSTEM_ERROR_MESSAGE, e);
             return new ResponseEntity<>(false, e.getMessage());
         }
     }
