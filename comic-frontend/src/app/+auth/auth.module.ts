@@ -4,6 +4,7 @@ import {CommonModule} from '@angular/common';
 import {routing} from "./auth.routing";
 import {AuthComponent} from './auth.component';
 import {UserService} from "../+service/user.service";
+import {UserGroupService} from "../+service/user.group.service";
 
 
 @NgModule({
@@ -13,7 +14,7 @@ import {UserService} from "../+service/user.service";
         routing,
     ],
     declarations: [AuthComponent],
-    providers: [UserService]
+    providers: [UserService, UserGroupService]
 })
 export class AuthModule {
 }

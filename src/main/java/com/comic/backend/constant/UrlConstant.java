@@ -5,6 +5,7 @@ package com.comic.backend.constant;
  */
 public class UrlConstant {
     public static final String USER_BASE_URL = "/user";
+    public static final String USER_GROUP_BASE_URL = "/userGroup";
     public static final String UPDATE_URL = "/{user_id}";
     public static final String GET_URL = "/{user_id}";
     public static final String LOGIN_URL = "/login";
