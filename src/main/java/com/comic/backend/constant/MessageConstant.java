@@ -6,8 +6,9 @@ public class MessageConstant {
     public static final String USER_NOT_FOUND = "User not found";
     public static final String USER_NAME_OR_PASSWORD_IS_INVALID = "Username or password is invalid";
     public static final String SYSTEM_ERROR_MESSAGE = "System error : ";
-    public static final String UPDATE_SUCCESS = "Update success";
-    public static final String CREATE_SUCCESS = "Create success user id ";
-    public static final String VALIDATE_SUCCESS = "Account Validated";
+    public static final String UPDATE_SUCCESS = "Update user successfully";
+    public static final String CREATE_SUCCESS = "Create user id successfully";
+    public static final String VALIDATE_SUCCESS = "Account validated";
+    public static final String PASSWORD_RESET = "Reset password successfully";
 
 }

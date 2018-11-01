@@ -10,6 +10,7 @@ public class UrlConstant {
     public static final String GET_URL = "/{user_id}";
     public static final String LOGIN_URL = "/login";
     public static final String ACTIVE_URL = "/active/{user_id}";
+    public static final String RESET_PASS_URL = "/reset-password";
 
 
 }

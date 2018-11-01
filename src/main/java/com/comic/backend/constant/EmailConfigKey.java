@@ -1,7 +1,7 @@
 package com.comic.backend.constant;
 
 public enum EmailConfigKey {
-    SMTP_HOST("smtp.host"), SMTP_USER("smtp.user"), SMTP_PASSWORD("smtp.password"), SMTP_PORT("smtp."),
+    SMTP_HOST("smtp.host"), SMTP_USER("smtp.user"), SMTP_PASSWORD("smtp.password"), SMTP_PORT("smtp.port"),
     SMTP_FROM_ADDRESS("smtp.from.address"),
     SMTP_FROM_NAME("smtp.from.name"),
     SMTP_SUBJECT_EMAIL_VALIDATE("smtp.subject.email_validate"),

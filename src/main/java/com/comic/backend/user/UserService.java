@@ -1,8 +1,10 @@
 package com.comic.backend.user;
 
+import com.comic.backend.constant.EmailSendType;
 import com.comic.backend.constant.SecurityConstant;
 import com.comic.backend.request.LoginRequest;
 import com.comic.backend.utils.Common;
+import com.comic.backend.utils.EmailTo;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.logging.log4j.LogManager;
@@ -12,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static com.comic.backend.constant.MessageConstant.*;
 import static com.comic.backend.constant.SecurityConstant.EXPIRE_MINUTES;
@@ -26,10 +30,14 @@ public class UserService {
     @Autowired
     protected UsersRepository usersRepository;
 
+    @Autowired
+    protected Common commonService;
+
+
     @Transactional
     public UserEntity create(UserEntity userEntity) {
         logger.info("Create new user with userName [{}]", userEntity.getUserName());
-        userEntity.setPassword(Common.hash(userEntity.getPassword(), SecurityConstant.PASSWORD_HASH_ALGORITHM));
+        userEntity.setPassword(Common.hash(userEntity.getPassword()));
         userEntity.setActive(false);
         return usersRepository.save(userEntity);
     }
@@ -52,7 +60,7 @@ public class UserService {
         UserEntity userEntity = usersRepository.findByUserNameEquals(request.getUserName());
 
         if (userEntity == null) return USER_NAME_OR_PASSWORD_IS_INVALID;
-        String loginPassword = Common.hash(request.getPassword(), SecurityConstant.PASSWORD_HASH_ALGORITHM);
+        String loginPassword = Common.hash(request.getPassword());
         if (!loginPassword.equals(userEntity.getPassword())) return USER_NAME_OR_PASSWORD_IS_INVALID;
         return null;
     }
@@ -88,6 +96,25 @@ public class UserService {
         UserEntity user = usersRepository.findByIdEquals(userId);
         user.setActive(true);
         usersRepository.saveAndFlush(user);
+    }
+
+    public String resetPassword(String userName) {
+        UserEntity userEntity = usersRepository.findByUserNameEquals(userName);
+        if (userEntity != null ) {
+            String resetPassword = Common.generateRandom();
+            logger.info("@@@ Reset Pass = [{}]", resetPassword);
+            // to-do: sent to user mail
+            List<EmailTo> emailList = new ArrayList<>();
+            EmailTo emailTo = new EmailTo(userName, null);
+            emailList.add(emailTo);
+            Boolean result = commonService.sendMail(EmailSendType.RESET_PASSWORD, emailList,  resetPassword);
+            if (result) {
+                userEntity.setPassword(Common.hash(resetPassword));
+                usersRepository.saveAndFlush(userEntity);
+                return PASSWORD_RESET;
+            }
+        }
+        return null;
     }
 
     private UserEntity updateUserEntity(UserEntity oldUserEntity,UserEntity updateUserEntity) {

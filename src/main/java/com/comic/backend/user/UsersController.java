@@ -1,9 +1,9 @@
 package com.comic.backend.user;
 
-import com.comic.backend.constant.MessageConstant;
 import com.comic.backend.constant.UrlConstant;
 import com.comic.backend.reponse.ResponseEntity;
 import com.comic.backend.request.LoginRequest;
+import com.comic.backend.request.ResetRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,6 +102,16 @@ public class UsersController {
         logger.info("========== Active user id [{}] ==========", userId);
         userService.validateEmail(userId);
         return new ResponseEntity<>(true, null, VALIDATE_SUCCESS);
+    }
+
+    @RequestMapping(value = UrlConstant.RESET_PASS_URL, method = RequestMethod.POST)
+    public @ResponseBody
+    ResponseEntity<String> resetPassword(@RequestBody ResetRequest request) {
+        String newPassword = userService.resetPassword(request.getUserName());
+        if (newPassword != null) {
+            return new ResponseEntity<>(newPassword);
+        }
+        return new ResponseEntity<>(false, null, "Can not reset Pass");
     }
 
 
