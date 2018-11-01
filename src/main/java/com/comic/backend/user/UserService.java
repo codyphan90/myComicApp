@@ -1,7 +1,7 @@
 package com.comic.backend.user;
 
+import com.comic.backend.constant.ConfigKey;
 import com.comic.backend.constant.EmailSendType;
-import com.comic.backend.constant.SecurityConstant;
 import com.comic.backend.request.LoginRequest;
 import com.comic.backend.utils.Common;
 import com.comic.backend.utils.EmailTo;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -83,16 +83,11 @@ public class UserService {
 
     public String generateToken(String userName) {
         logger.info("Generate token for userName [{}] ", userName);
-        Date expireDate = new Date(System.currentTimeMillis() + EXPIRE_MINUTES * 60 * 1000);
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-        return Jwts.builder()
-                .setSubject(userName)
-                .setExpiration(expireDate)
-                .signWith(signatureAlgorithm, SECRET_KEY)
-                .compact();
+        Integer timeOut = Integer.parseInt(commonService.getValueByName(ConfigKey.TIME_OUT_MINUTES.getName()));
+        return commonService.generateToken(userName, timeOut);
     }
 
-    public void validateEmail(Integer userId) {
+    public void activeUser(Integer userId) {
         UserEntity user = usersRepository.findByIdEquals(userId);
         user.setActive(true);
         usersRepository.saveAndFlush(user);
@@ -102,18 +97,45 @@ public class UserService {
         UserEntity userEntity = usersRepository.findByUserNameEquals(userName);
         if (userEntity != null ) {
             String resetPassword = Common.generateRandom();
-            logger.info("@@@ Reset Pass = [{}]", resetPassword);
-            // to-do: sent to user mail
-            List<EmailTo> emailList = new ArrayList<>();
-            EmailTo emailTo = new EmailTo(userName, null);
-            emailList.add(emailTo);
-            Boolean result = commonService.sendMail(EmailSendType.RESET_PASSWORD, emailList,  resetPassword);
-            if (result) {
-                userEntity.setPassword(Common.hash(resetPassword));
+            userEntity.setPassword(Common.hash(resetPassword));
+            try {
                 usersRepository.saveAndFlush(userEntity);
+            } catch (Exception e) {
+                logger.error(SYSTEM_ERROR_MESSAGE, e);
+                return e.getMessage();
+            }
+
+            // send mail to user
+            List<EmailTo> emailList = Arrays.asList(new EmailTo(userName, null));
+            Boolean result = commonService.sendMail(EmailSendType.RESET_PASSWORD, emailList, resetPassword);
+            if (result) {
+                logger.info("Sent mail to [{}] successfully", userName);
                 return PASSWORD_RESET;
             }
         }
+        logger.error("User not found");
+        return null;
+    }
+
+    public String validateEmail(String userName) {
+        UserEntity userEntity = usersRepository.findByUserNameEquals(userName);
+        if (userEntity != null) {
+            if (userEntity.getActive())  {
+                logger.info("User [{}] already active", userName);
+                return null;
+            }
+            List<EmailTo> emailList = Arrays.asList(new EmailTo(userName, null));
+            String apiLink = commonService.getValueByName(ConfigKey.SERVER_API_ACTIVE_USER.getName());
+            String token = commonService.generateToken(userName, Integer.parseInt(commonService.getValueByName(ConfigKey.EXPIRE_MINUTES.getName())));
+            String validateEmailURL = apiLink + userEntity.getId() + "/" + token;
+            logger.info("Send email validate to user [{}]", userName);
+            Boolean result = commonService.sendMail(EmailSendType.VALIDATE_EMAIL_ADDRESS, emailList, validateEmailURL);
+            if (result) {
+                logger.info(EMAIL_SENT);
+                return EMAIL_SENT;
+            }
+        }
+        logger.error("User not found");
         return null;
     }
 

@@ -1,9 +1,12 @@
 package com.comic.backend.user;
 
+import com.comic.backend.constant.ConfigKey;
 import com.comic.backend.constant.UrlConstant;
 import com.comic.backend.reponse.ResponseEntity;
 import com.comic.backend.request.LoginRequest;
-import com.comic.backend.request.ResetRequest;
+import com.comic.backend.request.UserNameRequest;
+import com.comic.backend.utils.Common;
+import io.jsonwebtoken.Claims;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,9 @@ public class UsersController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private Common commonService;
 
     @RequestMapping(method = RequestMethod.POST)
     public @ResponseBody
@@ -96,23 +102,52 @@ public class UsersController {
         }
     }
 
-    @RequestMapping(value = UrlConstant.ACTIVE_URL, method = RequestMethod.POST)
+    @RequestMapping(value = UrlConstant.VALIDATE_EMAIL_URL, method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<String> active(@PathVariable("user_id") Integer userId) {
-        logger.info("========== Active user id [{}] ==========", userId);
-        userService.validateEmail(userId);
-        return new ResponseEntity<>(true, null, VALIDATE_SUCCESS);
+    ResponseEntity<String> validateEmail(@RequestBody UserNameRequest request) {
+        logger.info("========== Start validate email for user [{}] ==========", request.getUserName());
+        String result = userService.validateEmail(request.getUserName());
+        if (result != null) {
+            return new ResponseEntity<>(result);
+        }
+        return new ResponseEntity<>(false, VALIDATE_EMAIL_FAILED, null);
+    }
+
+    @RequestMapping(value = UrlConstant.ACTIVE_URL, method = RequestMethod.GET)
+    public @ResponseBody
+    String active(@PathVariable("user_id") Integer userId,
+                  @PathVariable("token") String token) {
+        logger.info("========== Start active user id [{}] ==========", userId);
+        try {
+            UserEntity userEntity = userService.getUser(userId);
+            if (userEntity != null) {
+                if (Common.validateToken(userEntity, token)) {
+                    logger.info("Token is valid");
+                    userService.activeUser(userId);
+                    String homePageURL = commonService.getValueByName(ConfigKey.WEB_HOME_PAGE.getName());
+                    logger.info("Active user [{}]", userEntity.getUserName());
+                    return String.format(REDIRECT_TO_HOMEPAGE, homePageURL);
+                }
+                logger.error("Token is invalid");
+                return CAN_NOT_ACCESS;
+            }
+            return USER_NOT_FOUND_HTML;
+        } catch (Exception e) {
+            logger.error(SYSTEM_ERROR_MESSAGE, e);
+            return CAN_NOT_ACTIVATE;
+        }
+
     }
 
     @RequestMapping(value = UrlConstant.RESET_PASS_URL, method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<String> resetPassword(@RequestBody ResetRequest request) {
-        String newPassword = userService.resetPassword(request.getUserName());
-        if (newPassword != null) {
-            return new ResponseEntity<>(newPassword);
+    ResponseEntity<String> resetPassword(@RequestBody UserNameRequest request) {
+        logger.info("========== Start reset password for user [{}] ==========", request.getUserName());
+        String result = userService.resetPassword(request.getUserName());
+        if (result != null) {
+            return new ResponseEntity<>(result);
         }
-        return new ResponseEntity<>(false, null, "Can not reset Pass");
+        return new ResponseEntity<>(false, PASSWORD_RESET_FAILED, null);
     }
-
 
 }

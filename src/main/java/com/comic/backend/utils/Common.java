@@ -2,10 +2,13 @@ package com.comic.backend.utils;
 
 import com.comic.backend.configuration.ConfigurationEntity;
 import com.comic.backend.configuration.ConfigurationRepository;
-import com.comic.backend.constant.EmailConfigKey;
+import com.comic.backend.constant.ConfigKey;
 import com.comic.backend.constant.EmailSendType;
 import com.comic.backend.constant.SecurityConstant;
-import com.comic.backend.user.UsersController;
+import com.comic.backend.user.UserEntity;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,11 +20,15 @@ import org.simplejavamail.mailer.config.TransportStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
+import java.security.Key;
 import java.security.MessageDigest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static com.comic.backend.constant.ConfigKey.*;
+import static com.comic.backend.constant.SecurityConstant.EXPIRE_MINUTES;
+import static com.comic.backend.constant.SecurityConstant.SECRET_KEY;
 
 @Service
 public class Common {
@@ -36,10 +43,8 @@ public class Common {
 
     public void loadConfig() {
         configMap = new HashMap<>();
-        System.out.println("repos  :" + configurationRepository);
         List<ConfigurationEntity> configurationEntities = configurationRepository.findAll();
         for (ConfigurationEntity configurationEntity : configurationEntities) {
-            logger.info(String.format("name: %s, value: %s", configurationEntity.getKeyName(), configurationEntity.getKeyValue()));
             configMap.put(configurationEntity.getKeyName(), configurationEntity.getKeyValue());
         }
     }
@@ -55,13 +60,9 @@ public class Common {
     public  boolean sendMail(EmailSendType emailSendType, List<EmailTo> tos, String content) {
 
         try {
-            if (configMap == null) {
-                loadConfig();
-            }
-
             EmailPopulatingBuilder emailPopulatingBuilder =
                     EmailBuilder.startingBlank()
-                            .from(getValueByName(EmailConfigKey.SMTP_FROM_NAME.getName()), getValueByName(EmailConfigKey.SMTP_FROM_ADDRESS.getName()));
+                            .from(getValueByName(SMTP_FROM_NAME.getName()), getValueByName(SMTP_FROM_ADDRESS.getName()));
 
             for (EmailTo emailTo : tos) {
                 emailPopulatingBuilder = emailPopulatingBuilder.to(emailTo.getName(), emailTo.getAddress());
@@ -71,14 +72,14 @@ public class Common {
             String contentText = "";
 
             if (EmailSendType.VALIDATE_EMAIL_ADDRESS.equals(emailSendType)) {
-                subject = getValueByName(EmailConfigKey.SMTP_SUBJECT_EMAIL_VALIDATE.getName());
-                contentText = getValueByName(EmailConfigKey.SMTP_CONTENT_EMAIL_VALIDATE.getName()).replaceAll("@@link@@", content);
+                subject = getValueByName(SMTP_SUBJECT_EMAIL_VALIDATE.getName());
+                contentText = getValueByName(SMTP_CONTENT_EMAIL_VALIDATE.getName()).replaceAll("@@link@@", content);
             } else if (EmailSendType.RESET_PASSWORD.equals(emailSendType)) {
-                subject = getValueByName(EmailConfigKey.SMTP_SUBJECT_RESET_PASSWORD.getName());
-                contentText = getValueByName(EmailConfigKey.SMTP_CONTENT_RESET_PASSWORD.getName()).replaceAll("@@password@@", content);
+                subject = getValueByName(SMTP_SUBJECT_RESET_PASSWORD.getName());
+                contentText = getValueByName(SMTP_CONTENT_RESET_PASSWORD.getName()).replaceAll("@@password@@", content);
             }
 
-            if ("HTML".equalsIgnoreCase(getValueByName(EmailConfigKey.SMTP_CONTENT_TYPE.getName()))) {
+            if ("HTML".equalsIgnoreCase(getValueByName(SMTP_CONTENT_TYPE.getName()))) {
                 emailPopulatingBuilder = emailPopulatingBuilder.withSubject(subject).withHTMLText(contentText);
             } else {
                 emailPopulatingBuilder = emailPopulatingBuilder.withSubject(subject).withPlainText(contentText);
@@ -87,8 +88,12 @@ public class Common {
             Email email = emailPopulatingBuilder.buildEmail();
 
             MailerBuilder.MailerRegularBuilder mailerRegularBuilder = MailerBuilder
-                    .withSMTPServer(getValueByName(EmailConfigKey.SMTP_HOST.getName()), Integer.parseInt(getValueByName(EmailConfigKey.SMTP_PORT.getName())), getValueByName(EmailConfigKey.SMTP_USER.getName()), getValueByName(EmailConfigKey.SMTP_PASSWORD.getName()))
+                    .withSMTPServer(getValueByName(SMTP_HOST.getName()),
+                            Integer.parseInt(getValueByName(SMTP_PORT.getName())),
+                            getValueByName(SMTP_USER.getName()),
+                            getValueByName(SMTP_PASSWORD.getName()))
                     .withTransportStrategy(getTransportStrategy());
+
             mailerRegularBuilder.buildMailer().sendMail(email);
             return true;
         } catch (Exception e) {
@@ -97,6 +102,18 @@ public class Common {
         }
 
 
+    }
+
+    public  TransportStrategy getTransportStrategy() {
+        String name = getValueByName(SMTP_TRANSPORT_STRATEGY.getName());
+        TransportStrategy transportStrategy = TransportStrategy.SMTP;
+        if ("SMTP_TLS".equalsIgnoreCase(name)) {
+            transportStrategy = TransportStrategy.SMTP_TLS;
+        } else if ("SMTPS".equalsIgnoreCase(name)) {
+            transportStrategy = TransportStrategy.SMTPS;
+        }
+        System.out.println("transport: " + transportStrategy);
+        return transportStrategy;
     }
 
     public static String hash(String str) {
@@ -113,20 +130,39 @@ public class Common {
 
     }
 
-    public  TransportStrategy getTransportStrategy() {
-        String name = getValueByName(EmailConfigKey.SMTP_TRANSPORT_STRATEGY.getName());
-        TransportStrategy transportStrategy = TransportStrategy.SMTP;
-        if ("SMTP_TLS".equalsIgnoreCase(name)) {
-            transportStrategy = TransportStrategy.SMTP_TLS;
-        } else if ("SMTPS".equalsIgnoreCase(name)) {
-            transportStrategy = TransportStrategy.SMTPS;
-        }
-        System.out.println("transport: " + transportStrategy);
-        return transportStrategy;
-    }
-
     public static String generateRandom() {
         return RandomStringUtils.randomAlphabetic(8);
+    }
+
+    public String generateToken(String userName, Integer minutes) {
+        Date expireDate = new Date(System.currentTimeMillis() + minutes * 60 * 1000);
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SECRET_KEY);
+        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+        return Jwts.builder()
+                .setSubject(userName)
+                .setExpiration(expireDate)
+                .signWith(signatureAlgorithm, signingKey)
+                .compact();
+    }
+
+    public static Claims decodeToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
+                .parseClaimsJws(token).getBody();
+//        System.out.println("ID: " + claims.getId());
+//        System.out.println("Subject: " + claims.getSubject());
+//        System.out.println("Issuer: " + claims.getIssuer());
+//        System.out.println("Expiration: " + claims.getExpiration());
+        return claims;
+    }
+
+    public static Boolean validateToken(UserEntity user, String token) {
+        Claims claims = decodeToken(token);
+        //to-do: verify expire time
+        Date expireDateToken = claims.getExpiration();
+
+        return (user.getUserName().equals(claims.getSubject()));
     }
 
 }

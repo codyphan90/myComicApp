@@ -1,6 +1,6 @@
 package com.comic.backend.constant;
 
-public enum EmailConfigKey {
+public enum ConfigKey {
     SMTP_HOST("smtp.host"), SMTP_USER("smtp.user"), SMTP_PASSWORD("smtp.password"), SMTP_PORT("smtp.port"),
     SMTP_FROM_ADDRESS("smtp.from.address"),
     SMTP_FROM_NAME("smtp.from.name"),
@@ -9,7 +9,11 @@ public enum EmailConfigKey {
     SMTP_CONTENT_EMAIL_VALIDATE("smtp.content.email_validate"),
     SMTP_CONTENT_RESET_PASSWORD("smtp.content.reset_password"),
     SMTP_CONTENT_TYPE("smtp.content.type"),
-    SMTP_TRANSPORT_STRATEGY("smtp.transport.strategy");
+    SMTP_TRANSPORT_STRATEGY("smtp.transport.strategy"),
+    WEB_HOME_PAGE("server.web.homepage"),
+    SERVER_API_ACTIVE_USER("server.api.active_user"),
+    TIME_OUT_MINUTES("server.session_time_out"),
+    EXPIRE_MINUTES("server.session_expire");
 
     private String name;
 
@@ -17,7 +21,7 @@ public enum EmailConfigKey {
         return this.name;
     }
 
-    private EmailConfigKey(String name) {
+    private ConfigKey(String name) {
         this.name = name;
     }
 }

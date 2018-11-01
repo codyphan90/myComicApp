@@ -1,6 +1,6 @@
 package com.comic.backend.request;
 
-public class ResetRequest {
+public class UserNameRequest {
     private String userName;
 
     public String getUserName() {
