@@ -2,6 +2,7 @@ package com.comic.backend.user;
 
 import com.comic.backend.constant.ConfigKey;
 import com.comic.backend.constant.EmailSendType;
+import com.comic.backend.constant.MessageConstant;
 import com.comic.backend.request.LoginRequest;
 import com.comic.backend.utils.Common;
 import com.comic.backend.utils.EmailTo;
@@ -94,8 +95,8 @@ public class UserService {
         UserEntity userEntity = usersRepository.findByUserNameEquals(userName);
         if (userEntity != null) {
             if (!userEntity.getActive()) {
-                logger.error("Can not reset password due to user email was not validated yet");
-                return null;
+                logger.error(USER_NOT_VALIDATE_YET);
+                return USER_NOT_VALIDATE_YET;
             }
             String resetPassword = Common.generateRandom();
             userEntity.setPassword(Common.hash(resetPassword));
@@ -111,11 +112,11 @@ public class UserService {
             Boolean result = commonService.sendMail(EmailSendType.RESET_PASSWORD, emailList, resetPassword);
             if (result) {
                 logger.info("Sent mail to [{}] successfully", userName);
-                return EMAIL_RESET_PASSWORD_SENT.replaceAll("@@user@@", userName);
+                return null;
             }
         }
         logger.error("User not found");
-        return null;
+        return MessageConstant.USER_NOT_FOUND;
     }
 
     public String sendEmailToValidate(String userName) {

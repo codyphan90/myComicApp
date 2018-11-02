@@ -131,11 +131,11 @@ public class UsersController {
     public @ResponseBody
     ResponseEntity<String> resetPassword(@RequestBody UserNameRequest request) {
         logger.info("========== Start reset password for user [{}] ==========", request.getUserName());
-        String result = userService.resetPassword(request.getUserName());
-        if (result != null) {
-            return new ResponseEntity<>(result);
+        String exceptionMessage = userService.resetPassword(request.getUserName());
+        if (exceptionMessage != null) {
+            return new ResponseEntity<>(false, exceptionMessage);
         }
-        return new ResponseEntity<>(false, PASSWORD_RESET_FAILED);
+        return new ResponseEntity<>(EMAIL_RESET_PASSWORD_SENT.replaceAll("@@user@@", request.getUserName()));
     }
 
 }

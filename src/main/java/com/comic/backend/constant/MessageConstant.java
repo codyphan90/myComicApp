@@ -19,4 +19,5 @@ public class MessageConstant {
     public static final String ACTIVE_SUCCESS = "Active user successfully";
     public static final String TOKEN_EXPIRED = "Token is expired";
     public static final String TOKEN_IS_INVALID = "Token is invalid";
+    public static final String USER_NOT_VALIDATE_YET = "Can not reset password due to user email was not validated yet";
 }
