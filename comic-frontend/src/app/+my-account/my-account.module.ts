@@ -5,7 +5,7 @@ import {NgModule} from '@angular/core';
 
 import {SmartadminModule} from '../shared/smartadmin.module'
 
-import {routing} from './test.routing';
+import {routing} from './my-account.routing';
 
 
 @NgModule({
@@ -16,6 +16,6 @@ import {routing} from './test.routing';
     declarations: [],
     providers: [],
 })
-export class TestModule {
+export class MyAccountModule {
 
 }

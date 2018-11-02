@@ -17,12 +17,12 @@ export const routes: Routes = [
     data: {pageTitle: 'Home'},
     children: [
       {
-        path: '', redirectTo: 'test/test1', pathMatch: 'full'
+        path: '', redirectTo: 'my-account/detail', pathMatch: 'full'
       },
       {
-        path: 'test',
-        loadChildren: 'app/+test/test.module#TestModule',
-        data: {pageTitle: 'Test'}
+        path: 'my-account',
+        loadChildren: 'app/+my-account/my-account.module#MyAccountModule',
+        data: {pageTitle: 'Account detail'}
       },
 
     ]

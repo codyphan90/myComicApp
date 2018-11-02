@@ -10,7 +10,7 @@ import {FadeInTop} from '../../shared/animations/fade-in-top.decorator';
     selector: 'test1',
     template: '<b>test 1111111111111111111</b>',
 })
-export class Test1Component implements OnInit {
+export class AccountDetailComponent implements OnInit {
 
     constructor() { }
 

@@ -9,7 +9,7 @@ export const environment = {
     authen: {
         login_url: HOME_URL + '/#' + LOGIN_ROUTE,
         logout_url: HOME_URL + '/#' + LOGIN_ROUTE,
-        home_url: HOME_URL,
+        home_url: HOME_URL + '/#/my-account/detail',
         login_route: LOGIN_ROUTE
     },
     user_service : {
