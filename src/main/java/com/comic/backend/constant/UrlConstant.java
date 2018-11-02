@@ -9,9 +9,9 @@ public class UrlConstant {
     public static final String UPDATE_URL = "/{user_id}";
     public static final String GET_URL = "/{user_id}";
     public static final String LOGIN_URL = "/login";
-    public static final String ACTIVE_URL = "/active/{user_id}/{token}";
+    public static final String ACTIVE_URL = "/active/{token}";
     public static final String RESET_PASS_URL = "/reset-password";
-    public static final String VALIDATE_EMAIL_URL = "/validate-email";
+    public static final String VALIDATE_EMAIL_URL = "/email-verify";
 
 
 }

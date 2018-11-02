@@ -5,8 +5,7 @@ import com.comic.backend.constant.EmailSendType;
 import com.comic.backend.request.LoginRequest;
 import com.comic.backend.utils.Common;
 import com.comic.backend.utils.EmailTo;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.Claims;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static com.comic.backend.constant.ConfigKey.SECRET_ACTIVE_KEY;
 import static com.comic.backend.constant.MessageConstant.*;
-import static com.comic.backend.constant.SecurityConstant.EXPIRE_MINUTES;
-import static com.comic.backend.constant.SecurityConstant.SECRET_KEY;
 
 
 @Service
@@ -41,6 +39,7 @@ public class UserService {
         userEntity.setActive(false);
         return usersRepository.save(userEntity);
     }
+
     @Transactional
     public UserEntity update(UserEntity updateUserEntity, Integer userId) {
         UserEntity oldUserEntity = usersRepository.findByIdEquals(userId);
@@ -52,21 +51,25 @@ public class UserService {
         }
     }
 
+
     public String validateUserLogin(LoginRequest request) {
         logger.info("Validate userName [{}] login", request.getUserName());
 
         if (StringUtils.isEmpty(request.getUserName())) return DATA_IS_BLANK;
         if (StringUtils.isEmpty(request.getUserName())) return DATA_IS_BLANK;
         UserEntity userEntity = usersRepository.findByUserNameEquals(request.getUserName());
-
         if (userEntity == null) return USER_NAME_OR_PASSWORD_IS_INVALID;
         String loginPassword = Common.hash(request.getPassword());
         if (!loginPassword.equals(userEntity.getPassword())) return USER_NAME_OR_PASSWORD_IS_INVALID;
         return null;
     }
 
-    public UserEntity getUser(Integer userId) {
+    public UserEntity getUserById(Integer userId) {
         return usersRepository.findByIdEquals(userId);
+    }
+
+    public UserEntity getUserByUserName(String userName) {
+        return usersRepository.findByUserNameEquals(userName);
     }
 
     public String validateCreateUser(UserEntity user) {
@@ -81,21 +84,19 @@ public class UserService {
     }
 
 
-    public String generateToken(String userName) {
-        logger.info("Generate token for userName [{}] ", userName);
-        Integer timeOut = Integer.parseInt(commonService.getValueByName(ConfigKey.TIME_OUT_MINUTES.getName()));
-        return commonService.generateToken(userName, timeOut);
-    }
-
-    public void activeUser(Integer userId) {
-        UserEntity user = usersRepository.findByIdEquals(userId);
-        user.setActive(true);
-        usersRepository.saveAndFlush(user);
+    public void activeUser(UserEntity userEntity) {
+        userEntity.setActive(true);
+        usersRepository.saveAndFlush(userEntity);
+        logger.info("Active user [{}] successfully", userEntity.getUserName());
     }
 
     public String resetPassword(String userName) {
         UserEntity userEntity = usersRepository.findByUserNameEquals(userName);
-        if (userEntity != null ) {
+        if (userEntity != null) {
+            if (!userEntity.getActive()) {
+                logger.error("Can not reset password due to user email was not validated yet");
+                return null;
+            }
             String resetPassword = Common.generateRandom();
             userEntity.setPassword(Common.hash(resetPassword));
             try {
@@ -110,41 +111,66 @@ public class UserService {
             Boolean result = commonService.sendMail(EmailSendType.RESET_PASSWORD, emailList, resetPassword);
             if (result) {
                 logger.info("Sent mail to [{}] successfully", userName);
-                return PASSWORD_RESET;
+                return EMAIL_RESET_PASSWORD_SENT.replaceAll("@@user@@", userName);
             }
         }
         logger.error("User not found");
         return null;
     }
 
-    public String validateEmail(String userName) {
+    public String sendEmailToValidate(String userName) {
         UserEntity userEntity = usersRepository.findByUserNameEquals(userName);
         if (userEntity != null) {
-            if (userEntity.getActive())  {
-                logger.info("User [{}] already active", userName);
+            if (userEntity.getActive()) {
+                logger.info("User [{}] already validate email", userName);
                 return null;
             }
             List<EmailTo> emailList = Arrays.asList(new EmailTo(userName, null));
-            String apiLink = commonService.getValueByName(ConfigKey.SERVER_API_ACTIVE_USER.getName());
-            String token = commonService.generateToken(userName, Integer.parseInt(commonService.getValueByName(ConfigKey.EXPIRE_MINUTES.getName())));
-            String validateEmailURL = apiLink + userEntity.getId() + "/" + token;
+            String tokenActiveUser = commonService.generateToken(userEntity.getUserName(), userEntity.getId(),
+                    commonService.getIntegerValue(ConfigKey.EXPIRE_MINUTES.getName()),
+                    commonService.getStringValue(ConfigKey.SECRET_ACTIVE_KEY.getName()));
+            String validateEmailURL = commonService.getStringValue(ConfigKey.WEB_VALIDATE_EMAIL.getName()).replaceAll("@@token@@", tokenActiveUser);
+
             logger.info("Send email validate to user [{}]", userName);
             Boolean result = commonService.sendMail(EmailSendType.VALIDATE_EMAIL_ADDRESS, emailList, validateEmailURL);
             if (result) {
-                logger.info(EMAIL_SENT);
-                return EMAIL_SENT;
+                logger.info(EMAIL_SENT.replaceAll("@@user@@", userName));
+                return EMAIL_SENT.replaceAll("@@user@@", userName);
             }
         }
         logger.error("User not found");
         return null;
     }
 
-    private UserEntity updateUserEntity(UserEntity oldUserEntity,UserEntity updateUserEntity) {
+    private UserEntity updateUserEntity(UserEntity oldUserEntity, UserEntity updateUserEntity) {
         oldUserEntity.setFirstName(updateUserEntity.getFirstName());
         oldUserEntity.setLastName(updateUserEntity.getLastName());
-        oldUserEntity.setPassword(updateUserEntity.getPassword());
+        oldUserEntity.setPassword(Common.hash(updateUserEntity.getPassword()));
         oldUserEntity.setGroupId(updateUserEntity.getGroupId());
         return oldUserEntity;
+    }
+
+    public String validateEmailToken(String token) {
+        Claims claims = Common.decodeToken(token, commonService.getStringValue(SECRET_ACTIVE_KEY.getName()));
+        try {
+            if (claims != null) {
+                UserEntity userEntity = usersRepository.findByIdEquals(Integer.parseInt(claims.getId()));
+                Date expireDate = claims.getExpiration();
+                Date now = new Date(System.currentTimeMillis());
+                if (now.before(expireDate)) {
+                    logger.info("Token is valid");
+                    userEntity.setActive(true);
+                    usersRepository.saveAndFlush(userEntity);
+                    return null;
+                }
+                logger.error("Token is Expired");
+                return TOKEN_EXPIRED;
+            }
+            return TOKEN_IS_INVALID;
+        } catch (Exception e) {
+            logger.error("Token is invalid");
+            return TOKEN_IS_INVALID;
+        }
     }
 
 }

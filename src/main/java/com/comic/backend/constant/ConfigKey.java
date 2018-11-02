@@ -13,7 +13,10 @@ public enum ConfigKey {
     WEB_HOME_PAGE("server.web.homepage"),
     SERVER_API_ACTIVE_USER("server.api.active_user"),
     TIME_OUT_MINUTES("server.session_time_out"),
-    EXPIRE_MINUTES("server.session_expire");
+    EXPIRE_MINUTES("server.session_expire"),
+    WEB_VALIDATE_EMAIL("server.web.validate_email"),
+    SECRET_LOGIN_KEY("server.secret.login_key"),
+    SECRET_ACTIVE_KEY("server.secret.active_key");
 
     private String name;
 

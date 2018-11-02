@@ -34,11 +34,11 @@ public class UsersController {
         try {
             String exceptionMessage = userService.validateCreateUser(userEntity);
             if (exceptionMessage != null) {
-                return new ResponseEntity<>(false, exceptionMessage, null);
+                return new ResponseEntity<>(false, exceptionMessage);
             } else {
                 userEntity = userService.create(userEntity);
                 logger.info("========== Finish create new user ==========");
-                return new ResponseEntity<>(true, null, CREATE_SUCCESS + userEntity.getId());
+                return new ResponseEntity<>(CREATE_SUCCESS.replaceAll("@@id@@", userEntity.getId().toString()));
             }
         } catch (Exception e) {
             logger.error(SYSTEM_ERROR_MESSAGE, e);
@@ -52,11 +52,11 @@ public class UsersController {
     ResponseEntity getUser(@PathVariable("user_id") Integer userId) {
         logger.info("========== Start getting userId [{}]==========", userId);
         try {
-            UserEntity userEntity = userService.getUser(userId);
+            UserEntity userEntity = userService.getUserById(userId);
             if (userEntity != null) {
                 return new ResponseEntity<>(userEntity);
             } else {
-                return new ResponseEntity<>(false, null, null);
+                return new ResponseEntity<>(false, USER_NOT_FOUND);
             }
         } catch (Exception e) {
             logger.error(SYSTEM_ERROR_MESSAGE, e);
@@ -72,13 +72,13 @@ public class UsersController {
         try {
             UserEntity updatedUserEntity = userService.update(userEntity, userId);
             if (updatedUserEntity != null) {
-                return new ResponseEntity<>(true, null, UPDATE_SUCCESS);
+                return new ResponseEntity<>(UPDATE_SUCCESS);
             } else {
-                return new ResponseEntity<>(false, null, USER_NOT_FOUND);
+                return new ResponseEntity<>(false, USER_NOT_FOUND);
             }
         } catch (Exception e) {
             logger.error(SYSTEM_ERROR_MESSAGE, e);
-            return new ResponseEntity<>(false, e.getMessage(), null);
+            return new ResponseEntity<>(false, e.getMessage());
         }
 
     }
@@ -92,7 +92,10 @@ public class UsersController {
             if (exceptionMessage != null) {
                 return new ResponseEntity<>(false, exceptionMessage);
             } else {
-                String token = userService.generateToken(request.getUserName());
+                UserEntity userEntity = userService.getUserByUserName(request.getUserName());
+                String token = commonService.generateToken(userEntity.getUserName(), userEntity.getId(),
+                        commonService.getIntegerValue(ConfigKey.TIME_OUT_MINUTES.getName()),
+                        commonService.getStringValue(ConfigKey.SECRET_LOGIN_KEY.getName()));
                 logger.info("========== Finish generate token for user ==========");
                 return new ResponseEntity<>(token);
             }
@@ -106,36 +109,21 @@ public class UsersController {
     public @ResponseBody
     ResponseEntity<String> validateEmail(@RequestBody UserNameRequest request) {
         logger.info("========== Start validate email for user [{}] ==========", request.getUserName());
-        String result = userService.validateEmail(request.getUserName());
+        String result = userService.sendEmailToValidate(request.getUserName());
         if (result != null) {
             return new ResponseEntity<>(result);
         }
-        return new ResponseEntity<>(false, VALIDATE_EMAIL_FAILED, null);
+        return new ResponseEntity<>(false, CAN_NOT_SEND_EMAIL);
     }
 
     @RequestMapping(value = UrlConstant.ACTIVE_URL, method = RequestMethod.GET)
     public @ResponseBody
-    String active(@PathVariable("user_id") Integer userId,
-                  @PathVariable("token") String token) {
-        logger.info("========== Start active user id [{}] ==========", userId);
-        try {
-            UserEntity userEntity = userService.getUser(userId);
-            if (userEntity != null) {
-                if (Common.validateToken(userEntity, token)) {
-                    logger.info("Token is valid");
-                    userService.activeUser(userId);
-                    String homePageURL = commonService.getValueByName(ConfigKey.WEB_HOME_PAGE.getName());
-                    logger.info("Active user [{}]", userEntity.getUserName());
-                    return String.format(REDIRECT_TO_HOMEPAGE, homePageURL);
-                }
-                logger.error("Token is invalid");
-                return CAN_NOT_ACCESS;
-            }
-            return USER_NOT_FOUND_HTML;
-        } catch (Exception e) {
-            logger.error(SYSTEM_ERROR_MESSAGE, e);
-            return CAN_NOT_ACTIVATE;
+    ResponseEntity<String> activeUser(@PathVariable("token") String token) {
+        String exceptionMessage = userService.validateEmailToken(token);
+        if (exceptionMessage != null) {
+            return new ResponseEntity<>(false, exceptionMessage);
         }
+        return new ResponseEntity<>(true, ACTIVE_SUCCESS);
 
     }
 
@@ -147,7 +135,7 @@ public class UsersController {
         if (result != null) {
             return new ResponseEntity<>(result);
         }
-        return new ResponseEntity<>(false, PASSWORD_RESET_FAILED, null);
+        return new ResponseEntity<>(false, PASSWORD_RESET_FAILED);
     }
 
 }

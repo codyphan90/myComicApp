@@ -6,6 +6,7 @@ import com.comic.backend.constant.ConfigKey;
 import com.comic.backend.constant.EmailSendType;
 import com.comic.backend.constant.SecurityConstant;
 import com.comic.backend.user.UserEntity;
+import com.comic.backend.user.UsersRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -27,7 +28,6 @@ import java.security.MessageDigest;
 import java.util.*;
 
 import static com.comic.backend.constant.ConfigKey.*;
-import static com.comic.backend.constant.SecurityConstant.EXPIRE_MINUTES;
 import static com.comic.backend.constant.SecurityConstant.SECRET_KEY;
 
 @Service
@@ -37,7 +37,6 @@ public class Common {
 
     @Autowired
     private ConfigurationRepository configurationRepository;
-
 
     private static Map<String, String> configMap = null;
 
@@ -49,11 +48,22 @@ public class Common {
         }
     }
 
-    public  String getValueByName(String name) {
-         if (configMap == null) {
-            loadConfig();
+    public  String getStringValue(String name) {
+         if (configMap == null) loadConfig();
+        return configMap.get(name);
+    }
+
+    public Integer getIntegerValue(String name) {
+        if (configMap == null) loadConfig();
+        try {
+            String valueString = configMap.get(name);
+            if (valueString != null) {
+                return Integer.parseInt(valueString);
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
         }
-        return configMap != null ? configMap.get(name) : null;
     }
 
 
@@ -62,7 +72,7 @@ public class Common {
         try {
             EmailPopulatingBuilder emailPopulatingBuilder =
                     EmailBuilder.startingBlank()
-                            .from(getValueByName(SMTP_FROM_NAME.getName()), getValueByName(SMTP_FROM_ADDRESS.getName()));
+                            .from(getStringValue(SMTP_FROM_NAME.getName()), getStringValue(SMTP_FROM_ADDRESS.getName()));
 
             for (EmailTo emailTo : tos) {
                 emailPopulatingBuilder = emailPopulatingBuilder.to(emailTo.getName(), emailTo.getAddress());
@@ -72,14 +82,14 @@ public class Common {
             String contentText = "";
 
             if (EmailSendType.VALIDATE_EMAIL_ADDRESS.equals(emailSendType)) {
-                subject = getValueByName(SMTP_SUBJECT_EMAIL_VALIDATE.getName());
-                contentText = getValueByName(SMTP_CONTENT_EMAIL_VALIDATE.getName()).replaceAll("@@link@@", content);
+                subject = getStringValue(SMTP_SUBJECT_EMAIL_VALIDATE.getName());
+                contentText = getStringValue(SMTP_CONTENT_EMAIL_VALIDATE.getName()).replaceAll("@@link@@", content);
             } else if (EmailSendType.RESET_PASSWORD.equals(emailSendType)) {
-                subject = getValueByName(SMTP_SUBJECT_RESET_PASSWORD.getName());
-                contentText = getValueByName(SMTP_CONTENT_RESET_PASSWORD.getName()).replaceAll("@@password@@", content);
+                subject = getStringValue(SMTP_SUBJECT_RESET_PASSWORD.getName());
+                contentText = getStringValue(SMTP_CONTENT_RESET_PASSWORD.getName()).replaceAll("@@password@@", content);
             }
 
-            if ("HTML".equalsIgnoreCase(getValueByName(SMTP_CONTENT_TYPE.getName()))) {
+            if ("HTML".equalsIgnoreCase(getStringValue(SMTP_CONTENT_TYPE.getName()))) {
                 emailPopulatingBuilder = emailPopulatingBuilder.withSubject(subject).withHTMLText(contentText);
             } else {
                 emailPopulatingBuilder = emailPopulatingBuilder.withSubject(subject).withPlainText(contentText);
@@ -88,10 +98,10 @@ public class Common {
             Email email = emailPopulatingBuilder.buildEmail();
 
             MailerBuilder.MailerRegularBuilder mailerRegularBuilder = MailerBuilder
-                    .withSMTPServer(getValueByName(SMTP_HOST.getName()),
-                            Integer.parseInt(getValueByName(SMTP_PORT.getName())),
-                            getValueByName(SMTP_USER.getName()),
-                            getValueByName(SMTP_PASSWORD.getName()))
+                    .withSMTPServer(getStringValue(SMTP_HOST.getName()),
+                            getIntegerValue(SMTP_PORT.getName()),
+                            getStringValue(SMTP_USER.getName()),
+                            getStringValue(SMTP_PASSWORD.getName()))
                     .withTransportStrategy(getTransportStrategy());
 
             mailerRegularBuilder.buildMailer().sendMail(email);
@@ -105,7 +115,7 @@ public class Common {
     }
 
     public  TransportStrategy getTransportStrategy() {
-        String name = getValueByName(SMTP_TRANSPORT_STRATEGY.getName());
+        String name = getStringValue(SMTP_TRANSPORT_STRATEGY.getName());
         TransportStrategy transportStrategy = TransportStrategy.SMTP;
         if ("SMTP_TLS".equalsIgnoreCase(name)) {
             transportStrategy = TransportStrategy.SMTP_TLS;
@@ -134,35 +144,29 @@ public class Common {
         return RandomStringUtils.randomAlphabetic(8);
     }
 
-    public String generateToken(String userName, Integer minutes) {
+    public String generateToken(String userName, Integer userId, Integer minutes, String secret) {
         Date expireDate = new Date(System.currentTimeMillis() + minutes * 60 * 1000);
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SECRET_KEY);
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secret);
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
         return Jwts.builder()
+                .setId(userId.toString())
                 .setSubject(userName)
                 .setExpiration(expireDate)
                 .signWith(signatureAlgorithm, signingKey)
                 .compact();
     }
 
-    public static Claims decodeToken(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
-                .parseClaimsJws(token).getBody();
-//        System.out.println("ID: " + claims.getId());
-//        System.out.println("Subject: " + claims.getSubject());
-//        System.out.println("Issuer: " + claims.getIssuer());
-//        System.out.println("Expiration: " + claims.getExpiration());
-        return claims;
+    public static Claims decodeToken(String token, String secret) {
+        try {
+
+            Claims claims = Jwts.parser()
+                    .setSigningKey(DatatypeConverter.parseBase64Binary(secret))
+                    .parseClaimsJws(token).getBody();
+            return claims;
+        }catch (Exception e) {
+            logger.error("Can not decode token: ",e);
+            return null;
+        }
     }
-
-    public static Boolean validateToken(UserEntity user, String token) {
-        Claims claims = decodeToken(token);
-        //to-do: verify expire time
-        Date expireDateToken = claims.getExpiration();
-
-        return (user.getUserName().equals(claims.getSubject()));
-    }
-
 }
