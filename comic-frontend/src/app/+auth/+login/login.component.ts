@@ -42,11 +42,11 @@ export class LoginComponent extends BaseComponent implements OnInit {
                     this.as.loginSuccess(response);
                     this.rememberLogin();
                 } else {
-                    this.errorHandle(response.exceptionMessage);
+                    this.errorAlert(response.exceptionMessage);
                 }
             },
             error => {
-                this.errorHandle("Has error!");
+                this.errorAlert("Has error!");
             })
     }
 

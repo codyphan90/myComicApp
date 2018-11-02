@@ -14,7 +14,8 @@ export const environment = {
     },
     user_service : {
         user_validation_endpoint: USER_SERVICE_BASE + '/login',
-        user_register_endpoint: USER_SERVICE_BASE
+        user_register_endpoint: USER_SERVICE_BASE,
+        user_reset_password_endpoint: USER_SERVICE_BASE + '/reset-password'
     },
     user_group_service : {
         get_user_group_list_endpoint: USER_GROUP_SERVICE_BASE

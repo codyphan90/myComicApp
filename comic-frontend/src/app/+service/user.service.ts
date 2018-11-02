@@ -24,4 +24,18 @@ export class UserService extends AbstractService {
         return this.http.post(environment.user_service.user_register_endpoint, user, options);
     }
 
+    public resetPassword(email): any {
+        const headers = new HttpHeaders({
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+        });
+
+        const options = {
+            headers: headers
+        };
+
+        return this.http.post(environment.user_service.user_reset_password_endpoint, {userName:email}, options);
+    }
+
 }

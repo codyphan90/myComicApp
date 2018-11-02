@@ -1,5 +1,8 @@
 export class BaseComponent {
-    errorHandle(message: string) {
+    errorAlert(message: string) {
+        alert(message);
+    }
+    successAlert(message: string) {
         alert(message);
     }
 }

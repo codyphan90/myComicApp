@@ -35,7 +35,7 @@ export class RegisterComponent extends BaseComponent implements OnInit {
                 this.userGroups = response.dataResponse;
             },
             error => {
-                this.errorHandle('Has error!');
+                this.errorAlert('Has error!');
             }
         )
     }
@@ -43,20 +43,21 @@ export class RegisterComponent extends BaseComponent implements OnInit {
     register(event) {
         event.preventDefault();
         if (this.user.password != this.user.passwordConfirm) {
-            alert("Password and confirm password not matched!");
+            this.errorAlert("Password and confirm password not matched!");
             return;
         }
         this.us.register(this.user).subscribe(response => {
             console.log('res: ' + JSON.stringify(response));
             var registerResult = response.success;
             if (registerResult == true) {
-                alert('Register success!');
+                this.successAlert('Register success!');
+                this.router.navigate(['/auth/login']);
             } else {
-                this.errorHandle(response.exceptionMessage);
+                this.errorAlert(response.exceptionMessage);
             }
 
         }, error => {
-            this.errorHandle('Has error!');
+            this.errorAlert('Has error!');
         })
     }
 
