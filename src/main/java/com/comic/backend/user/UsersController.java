@@ -4,9 +4,9 @@ import com.comic.backend.constant.ConfigKey;
 import com.comic.backend.constant.UrlConstant;
 import com.comic.backend.reponse.ResponseEntity;
 import com.comic.backend.request.LoginRequest;
+import com.comic.backend.request.UpdateUserRequest;
 import com.comic.backend.request.UserNameRequest;
 import com.comic.backend.utils.Common;
-import io.jsonwebtoken.Claims;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,16 +66,11 @@ public class UsersController {
 
     @RequestMapping(value = UrlConstant.UPDATE_URL, method = RequestMethod.PUT)
     public @ResponseBody
-    ResponseEntity update(@PathVariable("user_id") Integer userId,
-                          @RequestBody UserEntity userEntity) {
-        logger.info("========== Start update user [{}] ==========", userEntity.getUserName());
+    ResponseEntity updateUser(@PathVariable("user_name") String userName,
+                          @RequestBody UpdateUserRequest updateUserRequest) {
+        logger.info("========== Start update user [{}] ==========", userName);
         try {
-            UserEntity updatedUserEntity = userService.update(userEntity, userId);
-            if (updatedUserEntity != null) {
-                return new ResponseEntity<>(UPDATE_SUCCESS);
-            } else {
-                return new ResponseEntity<>(false, USER_NOT_FOUND);
-            }
+            return userService.update(updateUserRequest, userName);
         } catch (Exception e) {
             logger.error(SYSTEM_ERROR_MESSAGE, e);
             return new ResponseEntity<>(false, e.getMessage());

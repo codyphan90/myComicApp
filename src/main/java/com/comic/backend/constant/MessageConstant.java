@@ -4,6 +4,7 @@ public class MessageConstant {
     public static final String DUPLICATE_EXCEPTION_MESSAGE = "%s is existed";
     public static final String DATA_IS_BLANK = "Username/Password is blank";
     public static final String USER_NOT_FOUND = "User not found";
+    public static final String PASSWORD_NOT_MATCH = "Password not Match";
     public static final String USER_NAME_OR_PASSWORD_IS_INVALID = "Username or password is invalid";
     public static final String ALREADY_ACTIVE = "User already active";
     public static final String SYSTEM_ERROR_MESSAGE = "System error : ";

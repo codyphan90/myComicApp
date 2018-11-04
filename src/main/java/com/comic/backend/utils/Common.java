@@ -131,8 +131,7 @@ public class Common {
             MessageDigest md = MessageDigest.getInstance(SecurityConstant.PASSWORD_HASH_ALGORITHM);
             md.update(str.getBytes());
             byte[] digest = md.digest();
-            String hash = DatatypeConverter.printHexBinary(digest);
-            return hash;
+            return DatatypeConverter.printHexBinary(digest);
         } catch (Exception e) {
             logger.error("Has error. ", e);
             return null;

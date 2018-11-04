@@ -3,7 +3,9 @@ package com.comic.backend.user;
 import com.comic.backend.constant.ConfigKey;
 import com.comic.backend.constant.EmailSendType;
 import com.comic.backend.constant.MessageConstant;
+import com.comic.backend.reponse.ResponseEntity;
 import com.comic.backend.request.LoginRequest;
+import com.comic.backend.request.UpdateUserRequest;
 import com.comic.backend.utils.Common;
 import com.comic.backend.utils.EmailTo;
 import io.jsonwebtoken.Claims;
@@ -42,14 +44,29 @@ public class UserService {
     }
 
     @Transactional
-    public UserEntity update(UserEntity updateUserEntity, Integer userId) {
-        UserEntity oldUserEntity = usersRepository.findByIdEquals(userId);
-        if (oldUserEntity != null) {
-            oldUserEntity = updateUserEntity(oldUserEntity, updateUserEntity);
-            return usersRepository.saveAndFlush(oldUserEntity);
+    public ResponseEntity update(UpdateUserRequest updateUserRequest, String userName) {
+        UserEntity userEntity = usersRepository.findByUserNameEquals(userName);
+        if (userEntity != null) {
+            if (updateUserRequest.getNewPassword()!= null && updateUserRequest.getOldPassword() != null) {
+                if (Common.hash(updateUserRequest.getOldPassword()).equals(userEntity.getPassword())) {
+                    userEntity.setPassword(Common.hash(updateUserRequest.getNewPassword()));
+                } else {
+                    return new ResponseEntity(false, PASSWORD_NOT_MATCH);
+                }
+            }
+            userEntity = updateUserEntity(userEntity, updateUserRequest);
+            usersRepository.saveAndFlush(userEntity);
+            return new ResponseEntity<> (UPDATE_SUCCESS);
         } else {
-            return null;
+            return new ResponseEntity<>(false,USER_NOT_FOUND);
         }
+    }
+
+    private UserEntity updateUserEntity(UserEntity userEntity, UpdateUserRequest updateUserEntity) {
+        userEntity.setFirstName(updateUserEntity.getFirstName());
+        userEntity.setLastName(updateUserEntity.getLastName());
+        userEntity.setGroupId(updateUserEntity.getGroupId());
+        return userEntity;
     }
 
 
@@ -82,13 +99,6 @@ public class UserService {
 
         if (entityCheckDuplicate > 0) return String.format(DUPLICATE_EXCEPTION_MESSAGE, "User " + user.getUserName());
         return null;
-    }
-
-
-    public void activeUser(UserEntity userEntity) {
-        userEntity.setActive(true);
-        usersRepository.saveAndFlush(userEntity);
-        logger.info("Active user [{}] successfully", userEntity.getUserName());
     }
 
     public String resetPassword(String userName) {
@@ -141,14 +151,6 @@ public class UserService {
         }
         logger.error("User not found");
         return null;
-    }
-
-    private UserEntity updateUserEntity(UserEntity oldUserEntity, UserEntity updateUserEntity) {
-        oldUserEntity.setFirstName(updateUserEntity.getFirstName());
-        oldUserEntity.setLastName(updateUserEntity.getLastName());
-        oldUserEntity.setPassword(Common.hash(updateUserEntity.getPassword()));
-        oldUserEntity.setGroupId(updateUserEntity.getGroupId());
-        return oldUserEntity;
     }
 
     public String validateEmailToken(String token) {
