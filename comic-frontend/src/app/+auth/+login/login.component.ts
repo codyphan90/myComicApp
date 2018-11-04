@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {AuthService} from "../../core/_auth/auth.service";
 import {environment} from "../../../environments/environment";
-import {BaseComponent} from "../base/BaseComponent";
+import {BaseComponent} from "../../base/base.component";
 
 const USER_NAME_REMEMBER_KEY='username_remember';
 const PASSWORD_REMEMBER_KEY='password_remember';

@@ -5,6 +5,7 @@ import {routing} from "./auth.routing";
 import {AuthComponent} from './auth.component';
 import {UserService} from "../+service/user.service";
 import {UserGroupService} from "../+service/user.group.service";
+import {UserFormComponent} from "../base/user.form.component";
 
 
 @NgModule({

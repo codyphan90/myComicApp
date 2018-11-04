@@ -5,12 +5,13 @@ import { RegisterComponent } from './register.component';
 import { TermsModalComponent } from './terms-modal/terms-modal.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { FormsModule } from '@angular/forms';
+import {UserFormModule} from "../../base/user.form.module";
 
 @NgModule({
   imports: [
     CommonModule,
     RegisterRoutingModule,
-
+    UserFormModule,
     FormsModule,
   ],
   exports: [],

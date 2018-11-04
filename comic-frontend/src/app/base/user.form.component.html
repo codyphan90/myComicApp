@@ -1,0 +1,86 @@
+<div class="well no-padding">
+
+    <form id="smart-form-register" class="smart-form client-form">
+        <header>
+            Registration is FREE*
+        </header>
+
+        <fieldset>
+            <!--<section>-->
+            <!--<label class="input"> <i class="icon-append fa fa-user"></i>-->
+            <!--<input [(ngModel)]="username" type="text" name="username" placeholder="Username">-->
+            <!--<b class="tooltip tooltip-bottom-right">Needed to enter the website</b> </label>-->
+            <!--</section>-->
+
+            <section>
+                <label class="input"> <i class="icon-append fa fa-envelope"></i>
+                    <input [(ngModel)]="user.userName" type="email" name="email" placeholder="Email address">
+                    <b class="tooltip tooltip-bottom-right">Needed to verify your account</b> </label>
+            </section>
+
+            <section>
+                <label class="input"> <i class="icon-append fa fa-lock"></i>
+                    <input [(ngModel)]="user.password" type="password" name="password" placeholder="Password" id="password">
+                    <b class="tooltip tooltip-bottom-right">Don't forget your password</b> </label>
+            </section>
+
+            <section>
+                <label class="input"> <i class="icon-append fa fa-lock"></i>
+                    <input [(ngModel)]="user.passwordConfirm" type="password" name="passwordConfirm" placeholder="Confirm password">
+                    <b class="tooltip tooltip-bottom-right">Don't forget your password</b> </label>
+            </section>
+        </fieldset>
+
+        <fieldset>
+            <div class="row">
+                <section class="col col-6">
+                    <label class="input">
+                        <input [(ngModel)]="user.firstName" type="text" name="firstname" placeholder="First name">
+                    </label>
+                </section>
+                <section class="col col-6">
+                    <label class="input">
+                        <input [(ngModel)]="user.lastName" type="text" name="lastname" placeholder="Last name">
+                    </label>
+                </section>
+            </div>
+
+            <div class="row">
+                <section class="col col-6">
+                    <label class="select">
+                        <select name="level" [(ngModel)]="user.groupId">
+                            <option value="0" selected disabled>Level</option>
+                            <option  *ngFor="let userGroup of userGroups" value="{{userGroup.id}}">{{userGroup.name}}</option>
+                        </select> <i></i> </label>
+                </section>
+                <section class="col col-6">
+                    <label class="input"> <i class="icon-append fa fa-calendar"></i>
+                        <input type="text" name="request" placeholder="Request activation on" class="datepicker" data-dateformat="dd/mm/yy">
+                    </label>
+                </section>
+            </div>
+
+            <section>
+                <label class="checkbox">
+                    <input type="checkbox" name="subscription" id="subscription">
+                    <i></i>I want to receive news and special offers</label>
+                <label class="checkbox">
+                    <input type="checkbox" name="terms" id="terms" [(ngModel)]="termsAgreed">
+                    <i></i>I agree with the <a href="#" (click)="openModal($event, termsModal)"> Terms and Conditions </a></label>
+            </section>
+        </fieldset>
+        <footer>
+            <button (click)="register($event)" class="btn btn-primary">
+                Register
+            </button>
+        </footer>
+
+        <div class="message">
+            <i class="fa fa-check"></i>
+            <p>
+                Thank you for your registration!
+            </p>
+        </div>
+    </form>
+
+</div>

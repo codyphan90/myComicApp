@@ -7,7 +7,7 @@ import {BsModalRef} from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import {User} from "../../bo/user";
 import {UserService} from "../../+service/user.service";
 import {UserGroupService} from "../../+service/user.group.service";
-import {BaseComponent} from "../base/BaseComponent";
+import {BaseComponent} from "../../base/base.component";
 
 @Component({
     selector: 'app-register',
@@ -26,40 +26,40 @@ export class RegisterComponent extends BaseComponent implements OnInit {
         super();
     }
 
-    user: User = {id: null, userName: null, password: null, firstName: null, lastName: null, groupId:0, isActive: null, passwordConfirm: null};
-    userGroups: any[];
+    // user: User = {id: null, userName: null, password: null, firstName: null, lastName: null, groupId:0, isActive: null, passwordConfirm: null};
+    // userGroups: any[];
 
     ngOnInit() {
-        this.ugs.getUserGroupList().subscribe(response => {
-                console.log('response: ' + JSON.stringify(response));
-                this.userGroups = response.dataResponse;
-            },
-            error => {
-                this.errorAlert('Has error!');
-            }
-        )
+        // this.ugs.getUserGroupList().subscribe(response => {
+        //         console.log('response: ' + JSON.stringify(response));
+        //         this.userGroups = response.dataResponse;
+        //     },
+        //     error => {
+        //         this.errorAlert('Has error!');
+        //     }
+        // )
     }
-
-    register(event) {
-        event.preventDefault();
-        if (this.user.password != this.user.passwordConfirm) {
-            this.errorAlert("Password and confirm password not matched!");
-            return;
-        }
-        this.us.register(this.user).subscribe(response => {
-            console.log('res: ' + JSON.stringify(response));
-            var registerResult = response.success;
-            if (registerResult == true) {
-                this.successAlert('Register success!');
-                this.router.navigate(['/auth/login']);
-            } else {
-                this.errorAlert(response.exceptionMessage);
-            }
-
-        }, error => {
-            this.errorAlert('Has error!');
-        })
-    }
+    //
+    // register(event) {
+    //     event.preventDefault();
+    //     if (this.user.password != this.user.passwordConfirm) {
+    //         this.errorAlert("Password and confirm password not matched!");
+    //         return;
+    //     }
+    //     this.us.register(this.user).subscribe(response => {
+    //         console.log('res: ' + JSON.stringify(response));
+    //         var registerResult = response.success;
+    //         if (registerResult == true) {
+    //             this.successAlert('Register success!');
+    //             this.router.navigate(['/auth/login']);
+    //         } else {
+    //             this.errorAlert(response.exceptionMessage);
+    //         }
+    //
+    //     }, error => {
+    //         this.errorAlert('Has error!');
+    //     })
+    // }
 
     openModal(event, template: TemplateRef<any>) {
         event.preventDefault();
