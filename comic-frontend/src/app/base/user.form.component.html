@@ -14,25 +14,33 @@
 
             <section>
                 <label class="input"> <i class="icon-append fa fa-envelope"></i>
-                    <input disabled="{{!isSave()}}" class="form-control" [(ngModel)]="user.userName" type="email" name="email" placeholder="Email address">
-                    <b class="tooltip tooltip-bottom-right">Needed to verify your account</b> </label>
+                    <input disabled="{{!isSave()}}" class="form-control" [(ngModel)]="user.userName" type="email"
+                           name="email" placeholder="Email address">
+                    <b *ngIf="!user.isActive" class="tooltip tooltip-bottom-right">Needed to verify your account</b>
+                </label>
+                <button *ngIf="!isSave()" (click)="verifyEmail()" class="btn btn-primary">
+                    Verify
+                </button>
             </section>
 
             <section>
                 <label class="input"> <i class="icon-append fa fa-lock"></i>
-                    <input [(ngModel)]="user.password" type="password" name="password" placeholder="Password" id="password">
+                    <input [(ngModel)]="user.password" type="password" name="password" placeholder="Password"
+                           id="password">
                     <b class="tooltip tooltip-bottom-right">Don't forget your password</b> </label>
             </section>
 
             <section *ngIf="!isSave()">
                 <label class="input"> <i class="icon-append fa fa-lock"></i>
-                    <input [(ngModel)]="user.newPassword" type="password" name="newPassword" placeholder="New password" id="newPassword">
+                    <input [(ngModel)]="user.newPassword" type="password" name="newPassword" placeholder="New password"
+                           id="newPassword">
                     <b class="tooltip tooltip-bottom-right">Don't forget your password</b> </label>
             </section>
 
             <section>
                 <label class="input"> <i class="icon-append fa fa-lock"></i>
-                    <input [(ngModel)]="user.passwordConfirm" type="password" name="passwordConfirm" placeholder="Confirm password">
+                    <input [(ngModel)]="user.passwordConfirm" type="password" name="passwordConfirm"
+                           placeholder="Confirm password">
                     <b class="tooltip tooltip-bottom-right">Don't forget your password</b> </label>
             </section>
         </fieldset>
@@ -56,31 +64,32 @@
                     <label class="select">
                         <select name="level" [(ngModel)]="user.groupId">
                             <option value="0" selected disabled>Level</option>
-                            <option  *ngFor="let userGroup of userGroups" value="{{userGroup.id}}">{{userGroup.name}}</option>
+                            <option *ngFor="let userGroup of userGroups" value="{{userGroup.id}}">{{userGroup.name}}
+                            </option>
                         </select> <i></i> </label>
                 </section>
                 <!--<section class="col col-6">-->
-                    <!--<label class="input"> <i class="icon-append fa fa-calendar"></i>-->
-                        <!--<input type="text" name="request" placeholder="Request activation on" class="datepicker" data-dateformat="dd/mm/yy">-->
-                    <!--</label>-->
+                <!--<label class="input"> <i class="icon-append fa fa-calendar"></i>-->
+                <!--<input type="text" name="request" placeholder="Request activation on" class="datepicker" data-dateformat="dd/mm/yy">-->
+                <!--</label>-->
                 <!--</section>-->
             </div>
 
             <!--<section>-->
-                <!--<label class="checkbox">-->
-                    <!--<input type="checkbox" name="subscription" id="subscription">-->
-                    <!--<i></i>I want to receive news and special offers</label>-->
-                <!--<label class="checkbox">-->
-                    <!--<input type="checkbox" name="terms" id="terms" [(ngModel)]="termsAgreed">-->
-                    <!--<i></i>I agree with the <a href="#" (click)="openModal($event, termsModal)"> Terms and Conditions </a></label>-->
+            <!--<label class="checkbox">-->
+            <!--<input type="checkbox" name="subscription" id="subscription">-->
+            <!--<i></i>I want to receive news and special offers</label>-->
+            <!--<label class="checkbox">-->
+            <!--<input type="checkbox" name="terms" id="terms" [(ngModel)]="termsAgreed">-->
+            <!--<i></i>I agree with the <a href="#" (click)="openModal($event, termsModal)"> Terms and Conditions </a></label>-->
             <!--</section>-->
         </fieldset>
         <footer>
-            <button *ngIf = "isSave()" (click)="register($event)" class="btn btn-primary">
+            <button *ngIf="isSave()" (click)="register($event)" class="btn btn-primary">
                 Register
             </button>
 
-            <button *ngIf = "!isSave()" (click)="update($event)" class="btn btn-primary">
+            <button *ngIf="!isSave()" (click)="update($event)" class="btn btn-primary">
                 UPDATE
             </button>
         </footer>

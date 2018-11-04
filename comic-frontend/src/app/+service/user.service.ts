@@ -69,4 +69,34 @@ export class UserService extends AbstractService {
         return this.http.put(environment.user_service.user_update_endpoint + '/' + user.userName, user, options);
     }
 
+
+    public verifyEmail(userName): any {
+        console.log("verify email: " + userName);
+        const headers = new HttpHeaders({
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+        });
+
+        const options = {
+            headers: headers
+        };
+        return this.http.post(environment.user_service.user_email_verify_endpoint, {userName: userName}, options);
+    }
+
+    public activeUser(token): any {
+        const headers = new HttpHeaders({
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+        });
+
+        const options = {
+            headers: headers
+        };
+        return this.http.get(environment.user_service.user_active_endpoint + '/' + token, options);
+    }
+
+
+
 }

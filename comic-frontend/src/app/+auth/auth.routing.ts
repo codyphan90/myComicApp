@@ -19,7 +19,11 @@ export const routes:Routes = [
   {
     path: 'locked',
     loadChildren: './+locked/locked.module#LockedModule'
-  }
+  },
+    {
+        path: 'email-active',
+        loadChildren: './+active/active.module#ActiveModule'
+    }
 ];
 
 export const routing = RouterModule.forChild(routes);

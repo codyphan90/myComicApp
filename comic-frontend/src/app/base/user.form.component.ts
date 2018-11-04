@@ -138,4 +138,19 @@ export class UserFormComponent extends BaseComponent implements OnInit {
         return (this.type == this.compType.SAVE);
     }
 
+    verifyEmail() {
+        this.us.verifyEmail(this.user.userName).subscribe(response => {
+            console.log('verify res: ' + JSON.stringify(response));
+            var sendVerifyEmailResult = response.success;
+            if (sendVerifyEmailResult == true) {
+                this.successAlert('An verify email has sent to your email addrress!');
+            } else {
+                this.errorAlert(response.exceptionMessage);
+            }
+
+        }, error => {
+            this.errorAlert('Has error!');
+        })
+    }
+
 }
