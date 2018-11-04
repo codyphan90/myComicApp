@@ -29,7 +29,7 @@ public class UsersController {
 
     @RequestMapping(method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity create(@RequestBody UserEntity userEntity) {
+    ResponseEntity createUser(@RequestBody UserEntity userEntity) {
         logger.info("========== Start creating new user ==========");
         try {
             String exceptionMessage = userService.validateCreateUser(userEntity);
@@ -49,10 +49,10 @@ public class UsersController {
 
     @RequestMapping(value = UrlConstant.GET_URL, method = RequestMethod.GET)
     public @ResponseBody
-    ResponseEntity getUser(@PathVariable("user_id") Integer userId) {
-        logger.info("========== Start getting userId [{}]==========", userId);
+    ResponseEntity getUser(@PathVariable("user_name") String userName) {
+        logger.info("========== Start getting userName [{}]==========", userName);
         try {
-            UserEntity userEntity = userService.getUserById(userId);
+            UserEntity userEntity = userService.getUserByUserName(userName);
             if (userEntity != null) {
                 return new ResponseEntity<>(userEntity);
             } else {
@@ -80,7 +80,7 @@ public class UsersController {
 
     @RequestMapping(value = UrlConstant.LOGIN_URL, method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity<String> login(@RequestBody LoginRequest request) {
+    ResponseEntity<String> loginUser(@RequestBody LoginRequest request) {
         logger.info("========== Start Login ==========");
         try {
             String exceptionMessage = userService.validateUserLogin(request);
