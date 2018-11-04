@@ -54,6 +54,7 @@ public class UsersController {
         try {
             UserEntity userEntity = userService.getUserByUserName(userName);
             if (userEntity != null) {
+                userEntity.setPassword(null);
                 return new ResponseEntity<>(userEntity);
             } else {
                 return new ResponseEntity<>(false, USER_NOT_FOUND);

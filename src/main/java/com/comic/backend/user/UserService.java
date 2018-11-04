@@ -47,8 +47,8 @@ public class UserService {
     public ResponseEntity update(UpdateUserRequest updateUserRequest, String userName) {
         UserEntity userEntity = usersRepository.findByUserNameEquals(userName);
         if (userEntity != null) {
-            if (updateUserRequest.getNewPassword()!= null && updateUserRequest.getOldPassword() != null) {
-                if (Common.hash(updateUserRequest.getOldPassword()).equals(userEntity.getPassword())) {
+            if (!StringUtils.isEmpty(updateUserRequest.getPassword()) && !StringUtils.isEmpty(updateUserRequest.getNewPassword())) {
+                if (Common.hash(updateUserRequest.getPassword()).equals(userEntity.getPassword())) {
                     userEntity.setPassword(Common.hash(updateUserRequest.getNewPassword()));
                 } else {
                     return new ResponseEntity(false, PASSWORD_NOT_MATCH);
@@ -58,7 +58,7 @@ public class UserService {
             usersRepository.saveAndFlush(userEntity);
             return new ResponseEntity<> (UPDATE_SUCCESS);
         } else {
-            return new ResponseEntity<>(false,USER_NOT_FOUND);
+            return new ResponseEntity<>(false, USER_NOT_FOUND);
         }
     }
 

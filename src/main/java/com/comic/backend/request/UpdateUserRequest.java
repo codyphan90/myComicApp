@@ -2,7 +2,7 @@ package com.comic.backend.request;
 
 
 public class UpdateUserRequest {
-    private String oldPassword;
+    private String password;
 
     private String newPassword;
 
@@ -12,13 +12,12 @@ public class UpdateUserRequest {
 
     private Integer groupId;
 
-
-    public String getOldPassword() {
-        return oldPassword;
+    public String getPassword() {
+        return password;
     }
 
-    public void setOldPassword(String oldPassword) {
-        this.oldPassword = oldPassword;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getNewPassword() {
