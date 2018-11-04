@@ -9,6 +9,8 @@ import {UserService} from "../+service/user.service";
 import {UserGroupService} from "../+service/user.group.service";
 import {BaseComponent} from "./base.component";
 import {AuthService} from "../core/_auth/auth.service";
+import {FacebookService, InitParams, LoginResponse} from "ngx-facebook";
+import {JwtHelper, tokenNotExpired} from 'angular2-jwt';
 
 @Component({
     selector: 'user-form',
@@ -17,13 +19,14 @@ import {AuthService} from "../core/_auth/auth.service";
 })
 export class UserFormComponent extends BaseComponent implements OnInit {
 
-
+    jwtHelper: JwtHelper = new JwtHelper();
     bsModalRef: BsModalRef;
     public termsAgreed = false;
 
+
     constructor(private us: UserService,
                 private router: Router,
-                private modalService: BsModalService, private  ugs: UserGroupService, private as: AuthService) {
+                private modalService: BsModalService, private  ugs: UserGroupService, private as: AuthService, private fb: FacebookService) {
         super();
     }
 
@@ -48,6 +51,13 @@ export class UserFormComponent extends BaseComponent implements OnInit {
             this.header = 'Registration';
         } else {
             this.header = 'Account detail';
+            let initParams: InitParams = {
+                appId: '184497559149860',
+                cookie: true,
+                xfbml: true,
+                version: 'v2.8',
+            };
+            this.fb.init(initParams);
         }
         this.ugs.getUserGroupList().subscribe(response => {
                 console.log('response: ' + JSON.stringify(response));
@@ -59,16 +69,15 @@ export class UserFormComponent extends BaseComponent implements OnInit {
                             this.user.passwordConfirm = '';
                             this.user.password = '';
                             this.user.newPassword = '';
-
                         },
                         error => {
-                            this.errorAlert('Has error!');
+                            this.errorAlert(error);
                         }
                     )
                 }
             },
             error => {
-                this.errorAlert('Has error!');
+                this.errorAlert(error.message);
             }
         )
     }
@@ -90,7 +99,7 @@ export class UserFormComponent extends BaseComponent implements OnInit {
             }
 
         }, error => {
-            this.errorAlert('Has error!');
+            this.errorAlert(error);
         })
     }
 
@@ -115,7 +124,7 @@ export class UserFormComponent extends BaseComponent implements OnInit {
             }
 
         }, error => {
-            this.errorAlert('Has error!');
+            this.errorAlert(error);
         })
 
     }
@@ -149,8 +158,22 @@ export class UserFormComponent extends BaseComponent implements OnInit {
             }
 
         }, error => {
-            this.errorAlert('Has error!');
+            this.errorAlert(error);
         })
+    }
+
+    connectFacebook() {
+        this.fb.login()
+            .then((response: LoginResponse) => {
+                console.log(response);
+                console.log("status: " + response.status);
+                if (response.status == 'connected') {
+                    var token = response.authResponse.accessToken;
+                    console.log('facebook id: ' + response.authResponse.userID);
+                    // console.log('access token: ' + this.jwtHelper.decodeToken(token));
+                }
+            })
+            .catch((error: any) => this.errorAlert(error));
     }
 
 }

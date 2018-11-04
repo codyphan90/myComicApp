@@ -20,6 +20,7 @@ import {SmartadminLayoutModule} from "./shared/layout/layout.module";
 
 
 import {ModalModule} from 'ngx-bootstrap/modal';
+import {FacebookModule} from "ngx-facebook";
 
 // Application wide providers
 const APP_PROVIDERS = [
@@ -47,13 +48,10 @@ type StoreType = {
         BrowserAnimationsModule,
         FormsModule,
         HttpModule,
-
         ModalModule.forRoot(),
-
-
         CoreModule,
         SmartadminLayoutModule,
-
+        FacebookModule.forRoot(),
         routing
     ],
     exports: [],

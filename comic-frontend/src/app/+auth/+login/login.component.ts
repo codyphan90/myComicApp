@@ -46,7 +46,7 @@ export class LoginComponent extends BaseComponent implements OnInit {
                 }
             },
             error => {
-                this.errorAlert("Has error!");
+                this.errorAlert(error.message);
             })
     }
 
