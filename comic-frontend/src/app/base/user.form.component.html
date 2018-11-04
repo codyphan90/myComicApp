@@ -14,19 +14,19 @@
 
             <section>
                 <label class="input"> <i class="icon-append fa fa-envelope"></i>
-                    <input [(ngModel)]="user.userName" type="email" name="email" placeholder="Email address">
+                    <input disabled="{{!isSave()}}" class="form-control" [(ngModel)]="user.userName" type="email" name="email" placeholder="Email address">
                     <b class="tooltip tooltip-bottom-right">Needed to verify your account</b> </label>
-            </section>
-
-            <section *ngIf="!isSave()">
-                <label class="input"> <i class="icon-append fa fa-lock"></i>
-                    <input [(ngModel)]="user.oldPassword" type="password" name="password" placeholder="Old password" id="oldPassword">
-                    <b class="tooltip tooltip-bottom-right">Don't forget your password</b> </label>
             </section>
 
             <section>
                 <label class="input"> <i class="icon-append fa fa-lock"></i>
                     <input [(ngModel)]="user.password" type="password" name="password" placeholder="Password" id="password">
+                    <b class="tooltip tooltip-bottom-right">Don't forget your password</b> </label>
+            </section>
+
+            <section *ngIf="!isSave()">
+                <label class="input"> <i class="icon-append fa fa-lock"></i>
+                    <input [(ngModel)]="user.newPassword" type="password" name="newPassword" placeholder="New password" id="newPassword">
                     <b class="tooltip tooltip-bottom-right">Don't forget your password</b> </label>
             </section>
 

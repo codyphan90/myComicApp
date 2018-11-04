@@ -6,5 +6,6 @@ export class User {
     lastName: any;
     groupId: any;
     isActive: any;
+    newPassword: any;
     passwordConfirm: any;
 }

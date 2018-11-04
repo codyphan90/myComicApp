@@ -1,4 +1,4 @@
-import {Component, OnInit,Input, TemplateRef} from '@angular/core';
+import {Component, OnInit, Input, TemplateRef} from '@angular/core';
 import {Router} from "@angular/router";
 
 
@@ -26,22 +26,45 @@ export class UserFormComponent extends BaseComponent implements OnInit {
                 private modalService: BsModalService, private  ugs: UserGroupService, private as: AuthService) {
         super();
     }
+
     @Input() type: any;
-    user: User = {id: null, userName: null, password: null, firstName: null, lastName: null, groupId:0, isActive: null, passwordConfirm: null};
+    user: User = {
+        id: null,
+        userName: null,
+        password: null,
+        firstName: null,
+        lastName: null,
+        groupId: 0,
+        isActive: null,
+        newPassword: null,
+        passwordConfirm: null
+    };
     userGroups: any[];
     header: string = '';
+
     ngOnInit() {
         console.log('Component type: ' + this.type);
         if (this.isSave()) {
             this.header = 'Registration';
         } else {
-            this.header =  'Account detail';
+            this.header = 'Account detail';
         }
         this.ugs.getUserGroupList().subscribe(response => {
                 console.log('response: ' + JSON.stringify(response));
                 this.userGroups = response.dataResponse;
                 if (!this.isSave()) {
+                    this.us.getUserByName(this.as.getUsername()).subscribe(response => {
+                            console.log('user: ' + JSON.stringify(response));
+                            this.user = response.dataResponse;
+                            this.user.passwordConfirm = '';
+                            this.user.password = '';
+                            this.user.newPassword = '';
 
+                        },
+                        error => {
+                            this.errorAlert('Has error!');
+                        }
+                    )
                 }
             },
             error => {
@@ -71,8 +94,29 @@ export class UserFormComponent extends BaseComponent implements OnInit {
         })
     }
 
+    isChangePassword(): boolean {
+        return (this.user.password && this.user.password != '' && this.user.newPassword && this.user.newPassword != '');
+    }
+
     update(event) {
         event.preventDefault();
+        if (this.isChangePassword() && (this.user.newPassword != this.user.passwordConfirm)) {
+            this.errorAlert("Password and confirm password not matched!");
+            return;
+        }
+
+        this.us.update(this.user).subscribe(response => {
+            console.log('res: ' + JSON.stringify(response));
+            var updateResult = response.success;
+            if (updateResult == true) {
+                this.successAlert('Update user success!');
+            } else {
+                this.errorAlert(response.exceptionMessage);
+            }
+
+        }, error => {
+            this.errorAlert('Has error!');
+        })
 
     }
 
@@ -90,7 +134,7 @@ export class UserFormComponent extends BaseComponent implements OnInit {
         this.bsModalRef.hide()
     }
 
-    isSave() : boolean {
+    isSave(): boolean {
         return (this.type == this.compType.SAVE);
     }
 
