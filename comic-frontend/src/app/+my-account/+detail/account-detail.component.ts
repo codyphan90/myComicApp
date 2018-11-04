@@ -4,15 +4,17 @@
 
 import { Component, OnInit } from '@angular/core';
 import {FadeInTop} from '../../shared/animations/fade-in-top.decorator';
+import {BaseComponent} from "../../base/base.component";
 
 @FadeInTop()
 @Component({
-    selector: 'test1',
-    template: '<b>test 1111111111111111111</b>',
+    selector: 'account-detail',
+    templateUrl: './account-detail.component.html',
 })
-export class AccountDetailComponent implements OnInit {
+export class AccountDetailComponent extends BaseComponent implements OnInit {
 
-    constructor() { }
+    COMP_TYPE= this.compType;
+    constructor() {super(); }
 
     ngOnInit() {
     }

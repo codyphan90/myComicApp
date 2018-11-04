@@ -16,6 +16,7 @@ import {BaseComponent} from "../../base/base.component";
 })
 export class RegisterComponent extends BaseComponent implements OnInit {
 
+    COMP_TYPE= this.compType;
 
     bsModalRef: BsModalRef;
     public termsAgreed = false;

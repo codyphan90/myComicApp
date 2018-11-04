@@ -8,6 +8,7 @@ import {User} from "../bo/user";
 import {UserService} from "../+service/user.service";
 import {UserGroupService} from "../+service/user.group.service";
 import {BaseComponent} from "./base.component";
+import {AuthService} from "../core/_auth/auth.service";
 
 @Component({
     selector: 'user-form',
@@ -22,17 +23,26 @@ export class UserFormComponent extends BaseComponent implements OnInit {
 
     constructor(private us: UserService,
                 private router: Router,
-                private modalService: BsModalService, private  ugs: UserGroupService) {
+                private modalService: BsModalService, private  ugs: UserGroupService, private as: AuthService) {
         super();
     }
     @Input() type: any;
     user: User = {id: null, userName: null, password: null, firstName: null, lastName: null, groupId:0, isActive: null, passwordConfirm: null};
     userGroups: any[];
-
+    header: string = '';
     ngOnInit() {
+        console.log('Component type: ' + this.type);
+        if (this.isSave()) {
+            this.header = 'Registration';
+        } else {
+            this.header =  'Account detail';
+        }
         this.ugs.getUserGroupList().subscribe(response => {
                 console.log('response: ' + JSON.stringify(response));
                 this.userGroups = response.dataResponse;
+                if (!this.isSave()) {
+
+                }
             },
             error => {
                 this.errorAlert('Has error!');
@@ -61,6 +71,11 @@ export class UserFormComponent extends BaseComponent implements OnInit {
         })
     }
 
+    update(event) {
+        event.preventDefault();
+
+    }
+
     openModal(event, template: TemplateRef<any>) {
         event.preventDefault();
         this.bsModalRef = this.modalService.show(template);
@@ -75,5 +90,8 @@ export class UserFormComponent extends BaseComponent implements OnInit {
         this.bsModalRef.hide()
     }
 
+    isSave() : boolean {
+        return (this.type == this.compType.SAVE);
+    }
 
 }
