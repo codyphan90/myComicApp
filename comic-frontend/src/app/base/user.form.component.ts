@@ -51,6 +51,7 @@ export class UserFormComponent extends BaseComponent implements OnInit {
         if (this.isSave()) {
             this.header = 'Registration';
         } else {
+            this.initFB();
             this.header = 'Account detail';
         }
         this.ugs.getUserGroupList().subscribe(response => {
@@ -167,7 +168,6 @@ export class UserFormComponent extends BaseComponent implements OnInit {
     }
 
     connectFacebook() {
-        this.initFB();
         this.fb.login()
             .then((response: LoginResponse) => {
                 console.log(response);
