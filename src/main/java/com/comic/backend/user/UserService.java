@@ -4,6 +4,7 @@ import com.comic.backend.constant.ConfigKey;
 import com.comic.backend.constant.EmailSendType;
 import com.comic.backend.constant.MessageConstant;
 import com.comic.backend.reponse.ResponseEntity;
+import com.comic.backend.request.FacebookRequest;
 import com.comic.backend.request.LoginRequest;
 import com.comic.backend.request.UpdateUserRequest;
 import com.comic.backend.utils.Common;
@@ -176,4 +177,19 @@ public class UserService {
         }
     }
 
+    public ResponseEntity<String> connectFacebook(FacebookRequest request) {
+        try {
+            UserEntity userEntity = getUserByUserName(request.getUserName());
+            if (userEntity != null) {
+                userEntity.setFacebookId(request.getFacebookId());
+                usersRepository.saveAndFlush(userEntity);
+                return new ResponseEntity<>(SUCCESS);
+            } else {
+                return new ResponseEntity<>(false, USER_NOT_FOUND);
+            }
+        } catch (Exception e) {
+            logger.error(SYSTEM_ERROR_MESSAGE, e);
+            return new ResponseEntity<>(false, e.getMessage());
+        }
+    }
 }

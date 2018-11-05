@@ -29,6 +29,9 @@ public class UserEntity {
     @Column(name = "is_active")
     private Boolean isActive;
 
+    @Column(name ="facebook_id")
+    private String facebookId;
+
     public Integer getId() {
         return id;
     }
@@ -80,6 +83,14 @@ public class UserEntity {
 
     public void setActive(Boolean active) {
         isActive = active;
+    }
+
+    public String getFacebookId() {
+        return facebookId;
+    }
+
+    public void setFacebookId(String facebookId) {
+        this.facebookId = facebookId;
     }
 }
 

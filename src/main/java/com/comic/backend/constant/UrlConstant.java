@@ -12,6 +12,7 @@ public class UrlConstant {
     public static final String ACTIVE_URL = "/active/{token}";
     public static final String RESET_PASS_URL = "/reset-password";
     public static final String VALIDATE_EMAIL_URL = "/email-verify";
+    public static final String CONNECT_FACEBOOK_URL = "/connect-facebook";
 
 
 }

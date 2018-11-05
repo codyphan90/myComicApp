@@ -3,6 +3,7 @@ package com.comic.backend.user;
 import com.comic.backend.constant.ConfigKey;
 import com.comic.backend.constant.UrlConstant;
 import com.comic.backend.reponse.ResponseEntity;
+import com.comic.backend.request.FacebookRequest;
 import com.comic.backend.request.LoginRequest;
 import com.comic.backend.request.UpdateUserRequest;
 import com.comic.backend.request.UserNameRequest;
@@ -44,7 +45,6 @@ public class UsersController {
             logger.error(SYSTEM_ERROR_MESSAGE, e);
             return new ResponseEntity<>(false, e.getMessage());
         }
-
     }
 
     @RequestMapping(value = UrlConstant.GET_URL, method = RequestMethod.GET)
@@ -132,6 +132,13 @@ public class UsersController {
             return new ResponseEntity<>(false, exceptionMessage);
         }
         return new ResponseEntity<>(EMAIL_RESET_PASSWORD_SENT.replaceAll("@@user@@", request.getUserName()));
+    }
+
+    @RequestMapping(value = UrlConstant.CONNECT_FACEBOOK_URL, method = RequestMethod.POST)
+    public @ResponseBody
+    ResponseEntity<String> connectFacebook(@RequestBody FacebookRequest request) {
+        logger.info("========== Start save facebook id for user [{}]==========", request.getUserName());
+        return userService.connectFacebook(request);
     }
 
 }
