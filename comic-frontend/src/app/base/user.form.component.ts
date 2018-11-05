@@ -40,7 +40,8 @@ export class UserFormComponent extends BaseComponent implements OnInit {
         groupId: 0,
         isActive: null,
         newPassword: null,
-        passwordConfirm: null
+        passwordConfirm: null,
+        facebookId: null
     };
     userGroups: any[];
     header: string = '';
@@ -51,13 +52,6 @@ export class UserFormComponent extends BaseComponent implements OnInit {
             this.header = 'Registration';
         } else {
             this.header = 'Account detail';
-            let initParams: InitParams = {
-                appId: '184497559149860',
-                cookie: true,
-                xfbml: true,
-                version: 'v2.8',
-            };
-            this.fb.init(initParams);
         }
         this.ugs.getUserGroupList().subscribe(response => {
                 console.log('response: ' + JSON.stringify(response));
@@ -99,7 +93,7 @@ export class UserFormComponent extends BaseComponent implements OnInit {
             }
 
         }, error => {
-            this.errorAlert(error);
+            this.errorAlert(error.message);
         })
     }
 
@@ -124,7 +118,7 @@ export class UserFormComponent extends BaseComponent implements OnInit {
             }
 
         }, error => {
-            this.errorAlert(error);
+            this.errorAlert(error.message);
         })
 
     }
@@ -158,22 +152,51 @@ export class UserFormComponent extends BaseComponent implements OnInit {
             }
 
         }, error => {
-            this.errorAlert(error);
+            this.errorAlert(error.message);
         })
     }
 
+    initFB() {
+        let initParams: InitParams = {
+            appId: '184497559149860',
+            cookie: true,
+            xfbml: true,
+            version: 'v2.8',
+        };
+        this.fb.init(initParams);
+    }
+
     connectFacebook() {
+        this.initFB();
         this.fb.login()
             .then((response: LoginResponse) => {
                 console.log(response);
                 console.log("status: " + response.status);
                 if (response.status == 'connected') {
                     var token = response.authResponse.accessToken;
-                    console.log('facebook id: ' + response.authResponse.userID);
+                    var facebookUserID = response.authResponse.userID;
+                    console.log('facebook id: ' + facebookUserID);
+                    if (!this.user.facebookId) {
+                        if (this.confirm("Do you want connect to this facebook user?")) {
+                            this.us.connectFacebook(this.user.userName, facebookUserID).subscribe(response => {
+                                console.log('connect res: ' + JSON.stringify(response));
+                                var connectFacebookResult = response.success;
+                                if (connectFacebookResult == true) {
+                                    this.successAlert('Connect facebook success!');
+                                    this.user.facebookId = facebookUserID;
+                                } else {
+                                    this.errorAlert(response.exceptionMessage);
+                                }
+
+                            }, error => {
+                                this.errorAlert(error.message);
+                            })
+                        }
+                    }
                     // console.log('access token: ' + this.jwtHelper.decodeToken(token));
                 }
             })
-            .catch((error: any) => this.errorAlert(error));
+            .catch((error: any) => this.errorAlert(error.message));
     }
 
 }

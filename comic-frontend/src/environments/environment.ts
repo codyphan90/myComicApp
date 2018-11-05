@@ -19,7 +19,8 @@ export const environment = {
         user_get_endpoint: USER_SERVICE_BASE,
         user_update_endpoint: USER_SERVICE_BASE,
         user_email_verify_endpoint: USER_SERVICE_BASE + '/email-verify',
-        user_active_endpoint: USER_SERVICE_BASE + '/active'
+        user_active_endpoint: USER_SERVICE_BASE + '/active',
+        user_connect_facebook_endpoint: USER_SERVICE_BASE + '/connect-facebook'
 
     },
     user_group_service : {

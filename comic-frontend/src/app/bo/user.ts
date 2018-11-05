@@ -8,4 +8,5 @@ export class User {
     isActive: any;
     newPassword: any;
     passwordConfirm: any;
+    facebookId: any;
 }

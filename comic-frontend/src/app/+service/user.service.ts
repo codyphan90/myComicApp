@@ -98,5 +98,17 @@ export class UserService extends AbstractService {
     }
 
 
+    public connectFacebook(userName, facebookId): any {
+        console.log('connect facebook: "' + userName);
+        const headers = new HttpHeaders({
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+        });
 
+        const options = {
+            headers: headers
+        };
+        return this.http.post(environment.user_service.user_connect_facebook_endpoint, {userName: userName, facebookId: facebookId}, options);
+    }
 }

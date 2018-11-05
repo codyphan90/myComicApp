@@ -9,4 +9,8 @@ export class BaseComponent {
     successAlert(message: string) {
         alert(message);
     }
+
+    confirm(message: string): boolean {
+        return window.confirm(message);
+    }
 }
