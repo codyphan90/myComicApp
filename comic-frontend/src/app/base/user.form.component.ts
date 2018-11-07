@@ -143,23 +143,24 @@ export class UserFormComponent extends BaseComponent implements OnInit {
     }
 
     verifyEmail() {
-        this.us.verifyEmail(this.user.userName).subscribe(response => {
-            console.log('verify res: ' + JSON.stringify(response));
-            var sendVerifyEmailResult = response.success;
-            if (sendVerifyEmailResult == true) {
-                this.successAlert('An verify email has sent to your email addrress!');
-            } else {
-                this.errorAlert(response.exceptionMessage);
-            }
-
-        }, error => {
-            this.errorAlert(error.message);
-        })
+        if (this.confirm(`Do you want to send verify link to email ${this.user.userName}`)) {
+            this.us.verifyEmail(this.user.userName).subscribe(response => {
+                var sendVerifyEmailResult = response.success;
+                if (sendVerifyEmailResult == true) {
+                    this.successAlert('An verify email has sent to your email addrress!');
+                } else {
+                    this.errorAlert(response.exceptionMessage);
+                }
+    
+            }, error => {
+                this.errorAlert(error.message);
+            })
+        }
     }
 
     initFB() {
         let initParams: InitParams = {
-            appId: '184497559149860',
+            appId: '163456804604097',
             cookie: true,
             xfbml: true,
             version: 'v2.8',
