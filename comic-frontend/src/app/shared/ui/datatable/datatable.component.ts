@@ -1,4 +1,4 @@
-import {Component, Input, ElementRef, AfterContentInit, OnInit} from '@angular/core';
+import {Component, Input, ElementRef, AfterContentInit, OnInit, EventEmitter, Output} from '@angular/core';
 
 declare var $: any;
 
@@ -24,6 +24,8 @@ export class DatatableComponent implements OnInit {
   @Input() public columnsHide: boolean;
   @Input() public tableClass: string;
   @Input() public width: string = '100%';
+  @Output() buttonClicked = new EventEmitter<any>();
+  jqueryDatatableObject: any;
 
   constructor(private el: ElementRef) {
   }
@@ -39,7 +41,7 @@ export class DatatableComponent implements OnInit {
 
   render() {
     let element = $(this.el.nativeElement.children[0]);
-    let options = this.options || {}
+    let options = this.options || {};
 
 
     let toolbar = '';
@@ -111,7 +113,21 @@ export class DatatableComponent implements OnInit {
       })
     }
 
+    this.jqueryDatatableObject = _dataTable;
+    _dataTable.on('click', 'td button', (e) => this.onRowButtonClick(e.target));
+  }
 
+  public jQObject(): any {
+    return this.jqueryDatatableObject;
+  }
+
+  private onRowButtonClick(clickEventTarget): void {
+    console.log('clickEventTarget: ' + clickEventTarget);
+    const data = this.jqueryDatatableObject.row($(clickEventTarget).parents('tr')).data();
+    while (clickEventTarget.nodeName != 'BUTTON') {
+      clickEventTarget = clickEventTarget.parentNode;
+    }
+    this.buttonClicked.emit({target: clickEventTarget, rowData: data});
   }
 
 }

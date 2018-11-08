@@ -13,4 +13,28 @@ export class BaseComponent {
     confirm(message: string): boolean {
         return window.confirm(message);
     }
+
+    common_options: any = {
+        processing: true,
+        serverSide: true,
+        ajax: '',
+        buttons: [
+            'copy', 'csv', 'pdf', 'print', 'pageLength', 'colvis'
+        ],
+        paginationLength: true,
+        columns: [],
+        columnDefs: [{
+            targets: [-1],
+            orderable: false,
+        }],
+        colReorder: true,
+        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    };
+
+    public getDTOptions(ajax: any, columns: any): any {
+        var _options = this.common_options;
+        _options.ajax = ajax;
+        _options.columns = columns;
+        return _options;
+    }
 }
