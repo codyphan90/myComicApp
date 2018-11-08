@@ -17,7 +17,12 @@ export const routes: Routes = [
     data: {pageTitle: 'Home'},
     children: [
       {
-        path: '', redirectTo: 'my-account/detail', pathMatch: 'full'
+        path: '', redirectTo: 'home-page', pathMatch: 'full'
+      },
+      {
+        path: 'home-page',
+        loadChildren: 'app/+home-page/home-page.module#HomePageModule',
+        data: {pageTitle: 'Home Page'}
       },
       {
         path: 'my-account',

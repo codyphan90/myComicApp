@@ -12,15 +12,6 @@
             <!--<b class="tooltip tooltip-bottom-right">Needed to enter the website</b> </label>-->
             <!--</section>-->
             <section>
-                <button *ngIf="!isSave()" (click)="verifyEmail()" class="btn btn-success btn-sm ">
-                Verify Email
-                </button>
-                <button *ngIf="!isSave()" (click)="connectFacebook()" class="btn btn-primary btn-sm">
-                    Connect to Facebook Account
-                </button>
-            </section>
-            
-            <section>
                 <label class="input"> <i class="icon-append fa fa-envelope"></i>
                     <input disabled="{{!isSave()}}" class="form-control" [(ngModel)]="user.userName" type="email"
                            name="email" placeholder="Email address">
@@ -90,15 +81,22 @@
             <!--</section>-->
         </fieldset>
         <footer>
-            <button *ngIf="isSave()" (click)="register($event)" class="btn btn-primary">
-                Register
-            </button>
+        <button *ngIf="!isSave()" (click)="verifyEmail()" class="btn btn-success btn-sm" style="margin-right: 20px">
+            Verify Email
+        </button>
 
-            <button *ngIf="!isSave()" (click)="update($event)" class="btn btn-primary">
-                Update
-            </button>
+        <button *ngIf="!isSave()" (click)="connectFacebook()" class="btn btn-primary btn-sm" style="margin-right: 20px">
+            Connect to Facebook Account
+        </button>
+
+        <button *ngIf="isSave()" (click)="register($event)" class="btn btn-primary">
+            Register
+        </button>
+        <button *ngIf="!isSave()" (click)="update($event)" class="btn btn-info" style="margin-right: 20px">
+            Update
+        </button>
         </footer>
-
+        
         <div class="message">
             <i class="fa fa-check"></i>
             <p>
