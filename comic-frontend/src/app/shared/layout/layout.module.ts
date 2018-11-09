@@ -16,6 +16,7 @@ import { AuthLayoutComponent } from './app-layouts/auth-layout.component';
 import {TooltipModule, BsDropdownModule} from "ngx-bootstrap";
 import { RouteBreadcrumbsComponent } from './ribbon/route-breadcrumbs.component';
 import {UtilsModule} from "../utils/utils.module";
+import {SmartadminDatatableModule} from "../ui/datatable/smartadmin-datatable.module";
 
 @NgModule({
   imports: [
@@ -29,7 +30,7 @@ import {UtilsModule} from "../utils/utils.module";
 
 
     TooltipModule,
-    BsDropdownModule,
+    BsDropdownModule
   ],
   declarations: [
     FooterComponent,

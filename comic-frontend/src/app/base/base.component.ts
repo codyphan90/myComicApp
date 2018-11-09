@@ -32,9 +32,27 @@ export class BaseComponent {
     };
 
     public getDTOptions(ajax: any, columns: any): any {
-        var _options = this.common_options;
-        _options.ajax = ajax;
-        _options.columns = columns;
+        var _options =
+            // this.common_options;
+        // _options.ajax = ajax;
+        // _options.columns = columns;
+
+        {
+            processing: true,
+                serverSide: true,
+            ajax: ajax,
+            buttons: [
+            'copy', 'csv', 'pdf', 'print', 'pageLength', 'colvis'
+        ],
+            paginationLength: true,
+            columns: columns,
+            columnDefs: [{
+            targets: [-1],
+            orderable: false,
+        }],
+            colReorder: true,
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
+        };
         return _options;
     }
 }

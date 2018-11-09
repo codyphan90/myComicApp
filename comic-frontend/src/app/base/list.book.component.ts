@@ -9,7 +9,18 @@ declare var $: any;
 })
 export class ListBookComponent extends BaseComponent implements OnInit {
     id: string;
-    options: any;
+    options: {
+        processing: true,
+        serverSide: true,
+        ajax: {url: 'http://localhost:8290/book/get-page'},
+        buttons: [
+            'copy', 'csv', 'pdf', 'print', 'pageLength', 'colvis'
+            ],
+        paginationLength: true,
+        columns: [{data: "name"}],
+        colReorder: true,
+        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    };
 
     static renderActionButtonAction(row): string {
         var temp = '<button name="Edit" href="javascript:void(0)"><i class="fa fa-edit"></i>Chi tiết</button>';
@@ -58,11 +69,12 @@ export class ListBookComponent extends BaseComponent implements OnInit {
 
     ngOnInit() {
         let self = this;
-        this.options = this.getDTOptions({
-            url: environment.book_service.get_page_endpoint
-        }, [
-            {data: "name"}
-        ]);
+        // console.log("get page url: " + environment.book_service.get_page_endpoint);
+        // this.options = this.getDTOptions({
+        //     url: environment.book_service.get_page_endpoint
+        // }, [
+        //     {data: "name"}
+        // ]);
     }
 
 }

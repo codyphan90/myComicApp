@@ -28,6 +28,6 @@ export const environment = {
         get_user_group_list_endpoint: USER_GROUP_SERVICE_BASE
     },
     book_service : {
-      get_page_endpoint: BOOK_SERVICE_BASE + '/getpage'
+      get_page_endpoint: BOOK_SERVICE_BASE + '/get-page/'
     }
 };
