@@ -81,7 +81,12 @@
             <!--</section>-->
         </fieldset>
         <footer>
-        <button *ngIf="!isSave()" (click)="verifyEmail()" class="btn btn-success btn-sm" style="margin-right: 20px">
+            <button *ngIf="!isSave()" (click)="getListFriendFacebook()" class="btn btn-primary btn-sm"
+                    style="margin-right: 20px">
+                get list friends <i class="fa fa-facebook"></i>
+            </button>
+
+            <button *ngIf="!isSave()" (click)="verifyEmail()" class="btn btn-success btn-sm" style="margin-right: 20px">
             Verify Email <i class="fa fa-mail-forward"></i>
         </button>
 

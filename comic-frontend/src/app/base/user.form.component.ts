@@ -9,8 +9,10 @@ import {UserService} from "../+service/user.service";
 import {UserGroupService} from "../+service/user.group.service";
 import {BaseComponent} from "./base.component";
 import {AuthService} from "../core/_auth/auth.service";
-import {FacebookService, InitParams, LoginResponse} from "ngx-facebook";
+import {FacebookService, InitParams, LoginOptions, LoginResponse} from "ngx-facebook";
 import {JwtHelper, tokenNotExpired} from 'angular2-jwt';
+import {ApiMethod} from "ngx-facebook/dist/esm/providers/facebook";
+import {forEach} from "@angular/router/src/utils/collection";
 
 @Component({
     selector: 'user-form',
@@ -169,7 +171,13 @@ export class UserFormComponent extends BaseComponent implements OnInit {
     }
 
     connectFacebook() {
-        this.fb.login()
+        const options: LoginOptions = {
+            scope: 'public_profile,user_friends,email',
+            return_scopes: true,
+            enable_profile_selector: true
+        };
+
+        this.fb.login(options)
             .then((response: LoginResponse) => {
                 console.log(response);
                 console.log("status: " + response.status);
@@ -196,8 +204,18 @@ export class UserFormComponent extends BaseComponent implements OnInit {
                     }
                     // console.log('access token: ' + this.jwtHelper.decodeToken(token));
                 }
-            })
-            .catch((error: any) => this.errorAlert(error.message));
+            }).catch((error: any) => {
+            this.errorAlert(error.message)
+        });
     }
+
+    getListFriendFacebook() {
+    this.fb.api('/' + this.user.facebookId + '/friends',).then((res: any) => {
+        console.log('@@@Got the users list friend ', JSON.stringify(res));
+        var listFacebookId = res.data.map(user => user.id);
+        console.log('@@@list user id ', listFacebookId);
+    }).catch((error: any) => this.errorAlert(error.message));
+
+}
 
 }
