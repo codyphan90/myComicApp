@@ -4,8 +4,9 @@ import {LoginInfoComponent} from "../../user/login-info/login-info.component";
 
 @Component({
 
-  selector: 'sa-navigation',
-  templateUrl: './navigation.component.html'
+    selector: 'sa-navigation',
+    templateUrl: './navigation.component.html',
+    styleUrls: ['./navigation.component.css']
 })
 export class NavigationComponent implements OnInit {
 

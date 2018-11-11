@@ -13,7 +13,6 @@ import {BaseComponent} from "../../base/base.component";
 })
 export class BooksComponent extends BaseComponent implements OnInit {
 
-    COMP_TYPE= this.compType;
     constructor() {super(); }
 
     ngOnInit() {

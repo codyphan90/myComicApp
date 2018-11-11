@@ -82,18 +82,18 @@
         </fieldset>
         <footer>
         <button *ngIf="!isSave()" (click)="verifyEmail()" class="btn btn-success btn-sm" style="margin-right: 20px">
-            Verify Email
+            Verify Email <i class="fa fa-mail-forward"></i>
         </button>
 
         <button *ngIf="!isSave()" (click)="connectFacebook()" class="btn btn-primary btn-sm" style="margin-right: 20px">
-            Connect to Facebook Account
+            Connect to <i class="fa fa-facebook"></i>
         </button>
 
         <button *ngIf="isSave()" (click)="register($event)" class="btn btn-primary">
             Register
         </button>
         <button *ngIf="!isSave()" (click)="update($event)" class="btn btn-info" style="margin-right: 20px">
-            Update
+            Update <i class="fa fa-save"></i>
         </button>
         </footer>
         

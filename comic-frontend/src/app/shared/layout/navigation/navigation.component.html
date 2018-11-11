@@ -1,39 +1,47 @@
-<aside id="left-panel">
+<div class="topnav">
 
-  <!-- User info -->
-  <sa-login-info></sa-login-info>
+<!-- User info -->
+  <!--<sa-login-info></sa-login-info>-->
   <!-- end user info -->
 
   <nav>
-    <!-- NOTE: Notice the gaps after each icon usage <i></i>..
-    Please note that these links work a bit different than
-    traditional href="" links. See documentation for details.
-    -->
+    <a routerLinkActive="active" routerLink="/" title="Home Page">
+      <i class="fa fa-lg fa-fw fa-home"></i> <span class="menu-item-parent">{{'Home Page' | i18n}}</span>
+    </a>
+    <a routerLinkActive="active" routerLink="/my-account/detail" title="Test 1">
+      <i class="fa fa-lg fa-fw fa-user"></i>{{'My Account' | i18n}}
+    </a>
+    <a> Create Book</a>
+    <a> Contact Us</a>
+    <div class="pull-right">
+        <!--<sa-collapse-menu></sa-collapse-menu>-->
+        <sa-collapse-menu></sa-collapse-menu>
+      <sa-logout></sa-logout>
+    </div>
+    <!--<ul saSmartMenu>-->
+      <!--<li routerLinkActive="active">-->
+        <!--<a routerLink="/" title="Home Page"><i class="fa fa-lg fa-fw fa-home"></i>-->
+          <!--<span class="menu-item-parent">{{'Home Page' | i18n}}</span>-->
+        <!--</a>-->
+      <!--</li>-->
 
-    <ul saSmartMenu>
-      <li routerLinkActive="active">
-        <a routerLink="/" title="Home Page"><i class="fa fa-lg fa-fw fa-home"></i> 
-          <span class="menu-item-parent">{{'Home Page' | i18n}}</span>
-        </a>
-      </li>
+      <!--<li>-->
+        <!--<a href="#">-->
+          <!--<i class="fa fa-lg fa-fw fa-user"></i> <span-->
+                <!--class="menu-item-parent">{{'My Account' | i18n}}</span></a>-->
+        <!--<ul>-->
+          <!--<li routerLinkActive="active">-->
+            <!--<a routerLink="/my-account/detail" title="Test 1"> {{'Detail' | i18n}}</a>-->
+          <!--</li>-->
+          <!--<li routerLinkActive="active">-->
+            <!--<a routerLink="/my-account/test2" title="Test 2"> {{'Test 2' | i18n}}</a>-->
+          <!--</li>-->
+        <!--</ul>-->
+      <!--</li>-->
+    <!--</ul>-->
 
-      <li>
-        <a href="#">
-          <i class="fa fa-lg fa-fw fa-shopping-cart"></i> <span
-                class="menu-item-parent">{{'My Account' | i18n}}</span></a>
-        <ul>
-          <li routerLinkActive="active">
-            <a routerLink="/my-account/detail" title="Test 1"> {{'Detail' | i18n}}</a>
-          </li>
-          <li routerLinkActive="active">
-            <a routerLink="/my-account/test2" title="Test 2"> {{'Test 2' | i18n}}</a>
-          </li>
-        </ul>
-      </li>
-    </ul>
-    
   </nav>
 
-  <sa-minify-menu></sa-minify-menu>
+  <!--<sa-minify-menu></sa-minify-menu>-->
 
-</aside>
+</div>

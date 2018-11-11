@@ -10,6 +10,7 @@ import {SmartMenuDirective} from "./smart-menu.directive";
 import {UserModule} from "../../user/user.module";
 import {RouterModule} from "@angular/router";
 import {ChatModule} from "../../chat/chat.module";
+import {CollapseMenuComponent} from "./collapse-menu/collapse-menu.component";
 
 @NgModule({
   imports: [
@@ -24,6 +25,7 @@ import {ChatModule} from "../../chat/chat.module";
     MinifyMenuComponent,
     NavigationComponent,
     SmartMenuDirective,
+      CollapseMenuComponent,
   ],
   exports: [
     BigBreadcrumbsComponent,
