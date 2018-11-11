@@ -1,5 +1,5 @@
 <div class="well" sa-widget color="blueDark">
-    <h2 style="text-align: center">{{'Trending Books' | i18n}}</h2>
+    <h2 style="text-align: center">{{title}}</h2>
     <div>
         <div class="widget-body no-padding">
             <sa-datatable #repLstDT (buttonClicked)="onActionButtonClicked($event)" [options]="options" filter="true" tableClass="table table-striped table-bordered table-hover">

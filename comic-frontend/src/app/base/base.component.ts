@@ -1,11 +1,12 @@
 export class BaseComponent {
     compType: any = {
-        SAVE: "SAVE", UPDATE:"UPDATE"
+        SAVE: "SAVE", UPDATE: "UPDATE"
     };
 
     errorAlert(message: string) {
         alert(message);
     }
+
     successAlert(message: string) {
         alert(message);
     }
@@ -19,9 +20,10 @@ export class BaseComponent {
         serverSide: true,
         ajax: '',
         buttons: [
-            'copy', 'csv', 'pdf', 'print', 'pageLength', 'colvis'
+            // 'copy', 'csv', 'pdf', 'print', 'pageLength', 'colvis'
         ],
         paginationLength: true,
+        bFilter: false,
         columns: [],
         columnDefs: [{
             targets: [-1],
@@ -32,27 +34,9 @@ export class BaseComponent {
     };
 
     public getDTOptions(ajax: any, columns: any): any {
-        var _options =
-            // this.common_options;
-        // _options.ajax = ajax;
-        // _options.columns = columns;
-
-        {
-            processing: true,
-                serverSide: true,
-            ajax: ajax,
-            buttons: [
-            'copy', 'csv', 'pdf', 'print', 'pageLength', 'colvis'
-        ],
-            paginationLength: true,
-            columns: columns,
-            columnDefs: [{
-            targets: [-1],
-            orderable: false,
-        }],
-            colReorder: true,
-            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
-        };
+        var _options = this.common_options;
+        _options.ajax = ajax;
+        _options.columns = columns;
         return _options;
     }
 }

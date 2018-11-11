@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
+import {Component, Input, OnInit, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {BaseComponent} from "./base.component";
 import {environment} from "../../environments/environment";
@@ -8,23 +8,24 @@ declare var $: any;
     templateUrl: './list.book.component.html'
 })
 export class ListBookComponent extends BaseComponent implements OnInit {
-    id: string;
-    options: {
-        processing: true,
-        serverSide: true,
-        ajax: {url: 'http://localhost:8290/book/get-page'},
-        buttons: [
-            'copy', 'csv', 'pdf', 'print', 'pageLength', 'colvis'
-            ],
-        paginationLength: true,
-        columns: [{data: "name"}],
-        colReorder: true,
-        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
-    };
 
-    static renderActionButtonAction(row): string {
-        var temp = '<button name="Edit" href="javascript:void(0)"><i class="fa fa-edit"></i>Chi tiết</button>';
-        +'<button name="Delete" href="javascript:void(0)"><i class="fa fa-edit"></i>Delete</button>';
+    @Input() type: any;
+    title = '';
+
+
+    id: string;
+    options = this.getDTOptions(environment.book_service.get_page_endpoint, [{data: "name"},
+        {
+            data: null,
+            render: function (data, type, row, meta) {
+                return ListBookComponent.renderActionButton(row);
+            }
+        }
+    ]);
+
+    static renderActionButton(row): string {
+        var temp = '<button name="Edit" href="javascript:void(0)"><i class="fa fa-edit"></i>Edit</button>'
+            + '<button name="Delete" href="javascript:void(0)"><i class="fa fa-remove"></i>Delete</button>';
         return temp;
     }
 
@@ -68,13 +69,7 @@ export class ListBookComponent extends BaseComponent implements OnInit {
     }
 
     ngOnInit() {
-        let self = this;
-        // console.log("get page url: " + environment.book_service.get_page_endpoint);
-        // this.options = this.getDTOptions({
-        //     url: environment.book_service.get_page_endpoint
-        // }, [
-        //     {data: "name"}
-        // ]);
+        this.title = this.type.des;
     }
 
 }

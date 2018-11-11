@@ -55,10 +55,7 @@ export class DatatableComponent implements OnInit {
     if (typeof options.ajax === 'string') {
       let url = options.ajax;
       options.ajax = {
-        url: url,
-        // complete: function (xhr) {
-        //
-        // }
+        url: url
       }
     }
 
@@ -79,6 +76,7 @@ export class DatatableComponent implements OnInit {
       }
     });
 
+    console.log('OPTIONS: ' + JSON.stringify(options));
     const _dataTable = element.DataTable(options);
 
     if (this.filter) {
