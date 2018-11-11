@@ -10,6 +10,7 @@ import {BaseComponent} from "../../base/base.component";
 @Component({
     selector: 'books',
     templateUrl: './books.component.html',
+    styleUrls: ['./books.component.css']
 })
 export class BooksComponent extends BaseComponent implements OnInit {
 

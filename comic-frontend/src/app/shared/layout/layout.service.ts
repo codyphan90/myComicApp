@@ -27,7 +27,7 @@ const store = {
   device: '',
 
   mobileViewActivated: false,
-  menuCollapsed: false,
+  menuCollapsed: true,
   menuMinified: false,
 };
 
