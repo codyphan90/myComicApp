@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from "@angular/core";
+import {AfterViewInit, Component, Input, OnInit, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {BaseComponent} from "./base.component";
 import {environment} from "../../environments/environment";
@@ -7,7 +7,7 @@ declare var $: any;
     selector: 'book-list',
     templateUrl: './list.book.component.html'
 })
-export class ListBookComponent extends BaseComponent implements OnInit {
+export class ListBookComponent extends BaseComponent implements OnInit, AfterViewInit {
 
     @Input() type: any;
     title = '';
@@ -24,8 +24,8 @@ export class ListBookComponent extends BaseComponent implements OnInit {
     ]);
 
     static renderActionButton(row): string {
-        var temp = '<button name="Edit" href="javascript:void(0)"><i class="fa fa-edit"></i>Edit</button>'
-            + '<button name="Delete" href="javascript:void(0)"><i class="fa fa-remove"></i>Delete</button>';
+        var temp = '<button name="Edit" href="javascript:void(0)"><i class="fa fa-edit"></i> Edit</button>'
+            + '<button name="Delete" href="javascript:void(0)"><i class="fa fa-remove"></i> Delete</button>';
         return temp;
     }
 
@@ -72,4 +72,7 @@ export class ListBookComponent extends BaseComponent implements OnInit {
         this.title = this.type.des;
     }
 
+    ngAfterViewInit() {
+
+    }
 }

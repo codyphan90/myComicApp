@@ -20,15 +20,17 @@ export class BaseComponent {
         serverSide: true,
         ajax: '',
         buttons: [
-            // 'copy', 'csv', 'pdf', 'print', 'pageLength', 'colvis'
+            'copy', 'pdf', 'colvis'
         ],
+        pageLength: 10,
         paginationLength: true,
         bFilter: false,
         columns: [],
         columnDefs: [{
-            targets: [-1],
+            targets: [0, 1],
             orderable: false,
-        }],
+        }
+        ],
         colReorder: true,
         lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
     };
