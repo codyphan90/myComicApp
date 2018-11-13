@@ -54,6 +54,11 @@ export class AuthService extends AbstractService {
         return dtk.sub;
     }
 
+    public getUserId(): string {
+        const dtk = this.getDecodedToken();
+        return dtk.sub;
+    }
+
 
     public getGroupName(): string {
         return '';

@@ -18,9 +18,9 @@ export class BaseComponent {
     common_options: any = {
         processing: true,
         serverSide: true,
-        ajax: '',
+        ajax: {url:'',data:null},
         buttons: [
-            'copy', 'pdf', 'colvis'
+            'copy', 'pdf'
         ],
         pageLength: 10,
         paginationLength: true,
@@ -35,9 +35,16 @@ export class BaseComponent {
         lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
     };
 
-    public getDTOptions(ajax: any, columns: any): any {
+    public getDTOptions(url: any, columns: any): any {
         var _options = this.common_options;
-        _options.ajax = ajax;
+        _options.ajax.url = url;
+        _options.columns = columns;
+        return _options;
+    }
+    public getDTOptionsWithData(url: any, columns: any, data): any {
+        var _options = this.common_options;
+        _options.ajax.url = url;
+        _options.ajax.data = data;
         _options.columns = columns;
         return _options;
     }

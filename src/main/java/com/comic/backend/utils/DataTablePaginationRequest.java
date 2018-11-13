@@ -12,6 +12,8 @@ public class DataTablePaginationRequest<T> {
     private int start;
     private int length;
     private String searchValue;
+    private String type;
+    private String typeData;
     private Map<Integer, DataTableColumn> columns = new HashMap<Integer, DataTableColumn>();
 
     private int orderColumnIndex;
@@ -90,32 +92,10 @@ public class DataTablePaginationRequest<T> {
 
     public Specifications getSpecifications() {
         Specifications specifications = null;
-        Specifications specificationsAll = null;
-        boolean filterAll = this.getSearchValue() != null && !this.getSearchValue().trim().isEmpty();
-        for (int idx : this.getColumns().keySet()) {
-            DataTableColumn dtc = this.getColumns().get(idx);
-            if (dtc.getSearchValue() != null && !dtc.getSearchValue().trim().isEmpty()) {
-                Specification specification = filterByFieldName(dtc.getData(), dtc.getSearchValue());
-                Specifications filterSpec = Specifications.where(specification);
-                if (specifications == null) {
-                    specifications = filterSpec;
-                } else {
-                    specifications = specifications.and(filterSpec);
-                }
-            }
-
-            Specification specificationAll = filterByFieldName(dtc.getData(), this.getSearchValue());
-            Specifications filterSpecAll = Specifications.where(specificationAll);
-            if (specificationsAll == null) {
-                specificationsAll = filterSpecAll;
-            } else {
-                specificationsAll = specificationsAll.or(filterSpecAll);
-            }
-
+        if ("MINE".equalsIgnoreCase(type)) {
+            specifications = Specifications.where(filterByFieldName("userId", typeData));
         }
-        if (specifications == null) return specificationsAll;
-        if (specificationsAll == null) return specifications;
-        return specifications.and(specificationsAll);
+        return specifications;
     }
 
     public Specification<T> filterByFieldName(final String fieldName, final String filterValue) {
@@ -156,4 +136,19 @@ public class DataTablePaginationRequest<T> {
         };
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getTypeData() {
+        return typeData;
+    }
+
+    public void setTypeData(String typeData) {
+        this.typeData = typeData;
+    }
 }

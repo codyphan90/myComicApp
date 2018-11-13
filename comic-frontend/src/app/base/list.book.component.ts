@@ -14,18 +14,11 @@ export class ListBookComponent extends BaseComponent implements OnInit, AfterVie
 
 
     id: string;
-    options = this.getDTOptions(environment.book_service.get_page_endpoint, [{data: "name"},
-        {
-            data: null,
-            render: function (data, type, row, meta) {
-                return ListBookComponent.renderActionButton(row);
-            }
-        }
-    ]);
+    options:any;
 
     static renderActionButton(row): string {
-        var temp = '<button name="Edit" href="javascript:void(0)"><i class="fa fa-edit"></i> Edit</button>'
-            + '<button name="Delete" href="javascript:void(0)"><i class="fa fa-remove"></i> Delete</button>';
+        var temp = '<button name="Edit" href="javascript:void(0)"><i class="fa fa-edit"></i></button>'
+            + '<button name="Delete" href="javascript:void(0)"><i class="fa fa-remove"></i></button>';
         return temp;
     }
 
@@ -70,6 +63,15 @@ export class ListBookComponent extends BaseComponent implements OnInit, AfterVie
 
     ngOnInit() {
         this.title = this.type.des;
+        var data = {type: this.type.code, type_data: 13};
+        this.options = this.getDTOptionsWithData(environment.book_service.get_page_endpoint, [{data: "name"},
+            {
+                data: null,
+                render: function (data, type, row, meta) {
+                    return ListBookComponent.renderActionButton(row);
+                }
+            }
+        ], data);
     }
 
     ngAfterViewInit() {

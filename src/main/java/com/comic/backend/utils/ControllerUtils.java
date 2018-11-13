@@ -1,7 +1,9 @@
 package com.comic.backend.utils;
 
 
-import org.apache.log4j.Logger;
+import com.comic.backend.book.BookController;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.util.MultiValueMap;
@@ -10,7 +12,7 @@ import java.util.List;
 
 public class ControllerUtils<T> {
 
-    private static Logger logger = Logger.getLogger(ControllerUtils.class);
+    private Logger logger = LogManager.getLogger(ControllerUtils.class);
 
     public DataTablePaginationResponse getPaginationData(JpaSpecificationExecutor baseRepository, MultiValueMap<String, String> params) {
         try {

@@ -29,10 +29,14 @@ public class BaseUtils {
             int start = Integer.parseInt(params.get("start").get(0));
             int length = Integer.parseInt(params.get("length").get(0));
             String searchValue = params.get("search[value]").get(0);
+            String type = params.get("type").get(0);
+            String typeData = params.get("type_data").get(0);
             dtpr.setDraw(draw);
             dtpr.setStart(start);
             dtpr.setLength(length);
             dtpr.setSearchValue(searchValue);
+            dtpr.setType(type);
+            dtpr.setTypeData(typeData);
         } catch (Exception e) {
             except(logger, e);
         }
