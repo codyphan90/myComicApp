@@ -165,7 +165,7 @@ export class UserFormComponent extends BaseComponent implements OnInit {
             appId: '163456804604097',
             cookie: true,
             xfbml: true,
-            version: 'v2.8',
+            version: 'v3.0',
         };
         this.fb.init(initParams);
     }

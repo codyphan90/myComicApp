@@ -1,5 +1,7 @@
 package com.comic.backend.book;
 
+import com.comic.backend.user.UserEntity;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -8,11 +10,12 @@ import java.util.Objects;
 public class BookEntity {
     private int id;
     private String name;
-    private int userId;
+//    private int userId;
     private Integer permission;
     private String fbShareUrl;
     private Integer fbShareCount;
     private String fbId;
+    private UserEntity userEntity;
 
     @Id
     @Column(name = "id")
@@ -35,15 +38,15 @@ public class BookEntity {
         this.name = name;
     }
 
-    @Basic
-    @Column(name = "user_id")
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
+//    @Basic
+//    @Column(name = "user_id")
+//    public int getUserId() {
+//        return userId;
+//    }
+//
+//    public void setUserId(int userId) {
+//        this.userId = userId;
+//    }
 
     @Basic
     @Column(name = "permission")
@@ -91,7 +94,6 @@ public class BookEntity {
         if (o == null || getClass() != o.getClass()) return false;
         BookEntity that = (BookEntity) o;
         return id == that.id &&
-                userId == that.userId &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(permission, that.permission) &&
                 Objects.equals(fbShareUrl, that.fbShareUrl) &&
@@ -99,8 +101,16 @@ public class BookEntity {
                 Objects.equals(fbId, that.fbId);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, userId, permission, fbShareUrl, fbShareCount, fbId);
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = true)
+    public UserEntity getUserEntity() {
+        return userEntity;
     }
+
+    public void setUserEntity(UserEntity userEntity) {
+        this.userEntity = userEntity;
+    }
+
+
 }

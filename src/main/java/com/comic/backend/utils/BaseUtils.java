@@ -30,7 +30,7 @@ public class BaseUtils {
             int length = Integer.parseInt(params.get("length").get(0));
             String searchValue = params.get("search[value]").get(0);
             String type = params.get("type").get(0);
-            String typeData = params.get("type_data").get(0);
+            List<String> typeData = params.get("type_data");
             dtpr.setDraw(draw);
             dtpr.setStart(start);
             dtpr.setLength(length);

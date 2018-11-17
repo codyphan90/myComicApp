@@ -32,6 +32,9 @@ public class UserEntity {
     @Column(name ="facebook_id")
     private String facebookId;
 
+    @Column(name = "is_admin")
+    private int isAdmin;
+
     public Integer getId() {
         return id;
     }
@@ -91,6 +94,18 @@ public class UserEntity {
 
     public void setFacebookId(String facebookId) {
         this.facebookId = facebookId;
+    }
+
+    public int getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(int isAdmin) {
+        this.isAdmin = isAdmin;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }
 

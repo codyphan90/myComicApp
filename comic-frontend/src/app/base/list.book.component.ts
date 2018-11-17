@@ -2,6 +2,7 @@ import {AfterViewInit, Component, Input, OnInit, ViewChild} from "@angular/core"
 import {ActivatedRoute, Router} from "@angular/router";
 import {BaseComponent} from "./base.component";
 import {environment} from "../../environments/environment";
+import {AuthService} from "../core/_auth/auth.service";
 declare var $: any;
 @Component({
     selector: 'book-list',
@@ -46,7 +47,7 @@ export class ListBookComponent extends BaseComponent implements OnInit, AfterVie
     delete(id) {
     }
 
-    constructor(private router: Router, private route: ActivatedRoute) {
+    constructor(private router: Router, private route: ActivatedRoute, private  as: AuthService) {
         super();
     }
 
@@ -63,7 +64,7 @@ export class ListBookComponent extends BaseComponent implements OnInit, AfterVie
 
     ngOnInit() {
         this.title = this.type.des;
-        var data = {type: this.type.code, type_data: 13};
+        var data = {type: this.type.code, type_data: this.as.getUserId()};
         this.options = this.getDTOptionsWithData(environment.book_service.get_page_endpoint, [{data: "name"},
             {
                 data: null,

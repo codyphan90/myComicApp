@@ -1,7 +1,5 @@
 package com.comic.backend.utils;
 
-
-import com.comic.backend.book.BookController;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.jpa.domain.Specifications;
@@ -30,6 +28,7 @@ public class ControllerUtils<T> {
             Specifications specifications = dtpr.getSpecifications();
             List<T> data;
             long totalRows = baseRepository.count(specifications);
+
             data = baseRepository.findAll(specifications, dtpr.getPageRequest()).getContent();
             long recordsFiltered = baseRepository.count(specifications);
 

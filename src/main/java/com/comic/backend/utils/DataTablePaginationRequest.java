@@ -1,6 +1,7 @@
 package com.comic.backend.utils;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 
@@ -13,7 +14,7 @@ public class DataTablePaginationRequest<T> {
     private int length;
     private String searchValue;
     private String type;
-    private String typeData;
+    private List<String> typeData;
     private Map<Integer, DataTableColumn> columns = new HashMap<Integer, DataTableColumn>();
 
     private int orderColumnIndex;
@@ -63,7 +64,7 @@ public class DataTablePaginationRequest<T> {
     public PageRequest getPageRequest() {
         PageRequest pageRequest = null;
         try {
-                pageRequest = new PageRequest(start / length, length);
+            pageRequest = new PageRequest(start / length, length);
         } catch (Exception e) {
             System.out.println("Co loi xay ra: " + e.getMessage());
         }
@@ -93,8 +94,24 @@ public class DataTablePaginationRequest<T> {
     public Specifications getSpecifications() {
         Specifications specifications = null;
         if ("MINE".equalsIgnoreCase(type)) {
-            specifications = Specifications.where(filterByFieldName("userId", typeData));
+            specifications = Specifications.where(filterByManyToOneField("id",new KeyValueObj("id", "userEntity"), typeData.get(0)));
         }
+
+        if ("FRIEND".equalsIgnoreCase(type)) {
+            if (typeData != null && !typeData.isEmpty()) {
+                specifications = Specifications.where(filterEqualByFieldName("fbId", typeData.get(0)));
+                if (typeData.size() > 1) {
+                    for (int i = 1; i < typeData.size(); i++) {
+                        specifications = specifications.or(filterEqualByFieldName("fbId", typeData.get(i)));
+                    }
+                }
+            }
+        }
+
+        if ("TRENDING".equalsIgnoreCase(type)) {
+            specifications = Specifications.where(filterByManyToOneField("isAdmin",new KeyValueObj("isAdmin", "userEntity"), "1"));
+        }
+
         return specifications;
     }
 
@@ -136,6 +153,21 @@ public class DataTablePaginationRequest<T> {
         };
     }
 
+    public Specification<T> filterByManyToOneField(final String specFieldName, final KeyValueObj joinTableInfo, final String filterValue) {
+        return new Specification<T>() {
+            @Override
+            public Predicate toPredicate(Root<T> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                try {
+                    System.out.println("specFieldName: " + specFieldName + ", table: " + joinTableInfo.getValue() + ", fieldName: " + joinTableInfo.getKey());
+                    return cq.where(cb.like(root.join(joinTableInfo.getValue()).get(joinTableInfo.getKey()).as(String.class), "%" + filterValue + "%")).getRestriction();
+                } catch (Exception ex) {
+                    System.out.println("co loi xay ra: " + ex.getMessage());
+                    return null;
+                }
+            }
+        };
+    }
+
     public String getType() {
         return type;
     }
@@ -144,11 +176,11 @@ public class DataTablePaginationRequest<T> {
         this.type = type;
     }
 
-    public String getTypeData() {
+    public List<String> getTypeData() {
         return typeData;
     }
 
-    public void setTypeData(String typeData) {
+    public void setTypeData(List<String> typeData) {
         this.typeData = typeData;
     }
 }
