@@ -94,14 +94,17 @@ public class DataTablePaginationRequest<T> {
     public Specifications getSpecifications() {
         Specifications specifications = null;
         if ("MINE".equalsIgnoreCase(type)) {
-            specifications = Specifications.where(filterByManyToOneField("id",new KeyValueObj("id", "userEntity"), typeData.get(0)));
+            specifications = Specifications.where(filterByManyToOneField("id", new KeyValueObj("id", "userEntity"), typeData.get(0)));
         }
 
         if ("FRIEND".equalsIgnoreCase(type)) {
+            System.out.printf("type Data: " + typeData);
             if (typeData != null && !typeData.isEmpty()) {
+                System.out.println("get 0: " + typeData.get(0));
                 specifications = Specifications.where(filterEqualByFieldName("fbId", typeData.get(0)));
                 if (typeData.size() > 1) {
                     for (int i = 1; i < typeData.size(); i++) {
+                        System.out.println("get i: " + typeData.get(i));
                         specifications = specifications.or(filterEqualByFieldName("fbId", typeData.get(i)));
                     }
                 }
@@ -109,7 +112,7 @@ public class DataTablePaginationRequest<T> {
         }
 
         if ("TRENDING".equalsIgnoreCase(type)) {
-            specifications = Specifications.where(filterByManyToOneField("isAdmin",new KeyValueObj("isAdmin", "userEntity"), "1"));
+            specifications = Specifications.where(filterByManyToOneField("isAdmin", new KeyValueObj("isAdmin", "userEntity"), "1"));
         }
 
         return specifications;

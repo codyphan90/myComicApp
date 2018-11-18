@@ -153,7 +153,7 @@ export class UserFormComponent extends BaseComponent implements OnInit {
                 } else {
                     this.errorAlert(response.exceptionMessage);
                 }
-    
+
             }, error => {
                 this.errorAlert(error.message);
             })
@@ -202,7 +202,7 @@ export class UserFormComponent extends BaseComponent implements OnInit {
                             })
                         }
                     }
-                    // console.log('access token: ' + this.jwtHelper.decodeToken(token));
+                    this.getListFriendFacebook();
                 }
             }).catch((error: any) => {
             this.errorAlert(error.message)
@@ -210,12 +210,13 @@ export class UserFormComponent extends BaseComponent implements OnInit {
     }
 
     getListFriendFacebook() {
-    this.fb.api('/' + this.user.facebookId + '/friends',).then((res: any) => {
-        console.log('@@@Got the users list friend ', JSON.stringify(res));
-        var listFacebookId = res.data.map(user => user.id);
-        console.log('@@@list user id ', listFacebookId);
-    }).catch((error: any) => this.errorAlert(error.message));
+        this.fb.api('/' + this.user.facebookId + '/friends',).then((res: any) => {
+            console.log('@@@Got the users list friend ', JSON.stringify(res));
+            var listFriendFacebookId = res.data.map(user => user.id);
+            this.as.facebookFriendList = listFriendFacebookId;
+            console.log('@@@list user id ', listFriendFacebookId);
+        }).catch((error: any) => this.errorAlert(error.message));
 
-}
+    }
 
 }

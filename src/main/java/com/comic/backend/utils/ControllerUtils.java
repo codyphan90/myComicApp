@@ -5,6 +5,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.util.MultiValueMap;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -26,15 +28,15 @@ public class ControllerUtils<T> {
 
 
             Specifications specifications = dtpr.getSpecifications();
-            List<T> data;
-            long totalRows = baseRepository.count(specifications);
-
-            data = baseRepository.findAll(specifications, dtpr.getPageRequest()).getContent();
-            long recordsFiltered = baseRepository.count(specifications);
-
-            logger.info(String.format("draw: %d, start: %d, length: %d, total row: %d, page: %d", draw, start, length, totalRows, page));
-
-
+            List<T> data = new ArrayList<>();
+            long totalRows = 0;
+            long recordsFiltered = 0;
+            if (specifications != null) {
+                totalRows = baseRepository.count(specifications);
+                data = baseRepository.findAll(specifications, dtpr.getPageRequest()).getContent();
+                recordsFiltered = baseRepository.count(specifications);
+                logger.info(String.format("draw: %d, start: %d, length: %d, total row: %d, page: %d", draw, start, length, totalRows, page));
+            }
             return new DataTablePaginationResponse(draw, totalRows, recordsFiltered, data);
         } catch (Exception e) {
             e.printStackTrace();

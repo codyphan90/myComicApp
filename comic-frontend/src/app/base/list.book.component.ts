@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {BaseComponent} from "./base.component";
 import {environment} from "../../environments/environment";
 import {AuthService} from "../core/_auth/auth.service";
+import {listType} from "../../environments/constants";
 declare var $: any;
 @Component({
     selector: 'book-list',
@@ -64,7 +65,13 @@ export class ListBookComponent extends BaseComponent implements OnInit, AfterVie
 
     ngOnInit() {
         this.title = this.type.des;
-        var data = {type: this.type.code, type_data: this.as.getUserId()};
+        var type_data;
+        if (this.type == listType.FRIEND) {
+            type_data = this.as.facebookFriendList;
+        } else {
+            type_data = this.as.getUserId();
+        }
+        var data = {type: this.type.code, type_data: type_data};
         this.options = this.getDTOptionsWithData(environment.book_service.get_page_endpoint, [{data: "name"},
             {
                 data: null,

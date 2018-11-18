@@ -31,6 +31,17 @@ export class AuthService extends AbstractService {
         }, options);
     }
 
+    private _facebookFriendList: any[] = [];
+
+
+    get facebookFriendList(): any[] {
+        return this._facebookFriendList;
+    }
+
+    set facebookFriendList(value: any[]) {
+        this._facebookFriendList = value;
+    }
+
     private getDecodedToken(): any {
         const token = localStorage.getItem('id_token');
         return this.jwtHelper.decodeToken(token);
