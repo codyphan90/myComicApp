@@ -3,20 +3,33 @@
 <!-- User info -->
   <!--<sa-login-info></sa-login-info>-->
   <!-- end user info -->
-
   <nav>
     <a routerLinkActive="active" routerLink="/" title="Home Page">
       <i class="fa fa-lg fa-fw fa-home"></i> <span class="menu-item-parent">{{'Home Page' | i18n}}</span>
     </a>
-    <a routerLinkActive="active" routerLink="/my-account/detail" title="Test 1">
+
+    <a routerLinkActive="active" routerLink="/create-story/story" title="Create Story">
+      <i class="fa fa-lg fa-fw fa-magic"></i>{{'Create Storys' | i18n}}
+    </a>
+
+    <a routerLinkActive="active" routerLink="/my-account/detail" title="My Account">
       <i class="fa fa-lg fa-fw fa-user"></i>{{'My Account' | i18n}}
     </a>
-    <a> Create Book</a>
+
     <a> Contact Us</a>
     <div class="pull-right">
-      <!--<sa-collapse-menu></sa-collapse-menu>-->
+      <sa-collapse-menu></sa-collapse-menu>
       <sa-logout></sa-logout>
     </div>
+
+
+  </nav>
+
+  <!--<sa-minify-menu></sa-minify-menu>-->
+
+</div>
+<!--<aside id="left-panel">-->
+  <!--<nav>-->
     <!--<ul saSmartMenu>-->
       <!--<li routerLinkActive="active">-->
         <!--<a routerLink="/" title="Home Page"><i class="fa fa-lg fa-fw fa-home"></i>-->
@@ -38,9 +51,6 @@
         <!--</ul>-->
       <!--</li>-->
     <!--</ul>-->
+  <!--</nav>-->
 
-  </nav>
-
-  <!--<sa-minify-menu></sa-minify-menu>-->
-
-</div>
+<!--</aside>-->
