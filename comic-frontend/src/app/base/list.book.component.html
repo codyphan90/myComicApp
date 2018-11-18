@@ -2,7 +2,7 @@
     <h2 style="text-align: center">{{title}}</h2>
     <div>
         <div class="widget-body no-padding">
-            <sa-datatable #repLstDT (buttonClicked)="onActionButtonClicked($event)" [options]="options" filter="true" tableClass="table table-striped table-bordered table-hover">
+            <sa-datatable #repLstDT (buttonClicked)="onActionButtonClicked($event)" (rowDoubleClicked)="onActionDoubleClicked($event)" [options]="options" filter="true" tableClass="table table-striped table-bordered table-hover">
                 <thead>
 
                 <tr>

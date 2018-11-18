@@ -25,6 +25,7 @@ export class DatatableComponent implements OnInit {
   @Input() public tableClass: string;
   @Input() public width: string = '100%';
   @Output() buttonClicked = new EventEmitter<any>();
+  @Output() rowDoubleClicked = new EventEmitter<any>();
   jqueryDatatableObject: any;
 
   constructor(private el: ElementRef) {
@@ -113,6 +114,9 @@ export class DatatableComponent implements OnInit {
 
     this.jqueryDatatableObject = _dataTable;
     _dataTable.on('click', 'td button', (e) => this.onRowButtonClick(e.target));
+    _dataTable.on('dblclick', 'tr td', (e) => {
+      this.onRowDoubleClick(e.target);
+    });
   }
 
   public jQObject(): any {
@@ -126,6 +130,11 @@ export class DatatableComponent implements OnInit {
       clickEventTarget = clickEventTarget.parentNode;
     }
     this.buttonClicked.emit({target: clickEventTarget, rowData: data});
+  }
+
+  private onRowDoubleClick(doubleClickEventTarget): void {
+    const data = this.jqueryDatatableObject.row($(doubleClickEventTarget).parents('tr')).data();
+    this.rowDoubleClicked.emit({rowData: data});
   }
 
 }

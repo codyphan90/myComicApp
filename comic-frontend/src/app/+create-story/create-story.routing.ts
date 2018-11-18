@@ -8,7 +8,13 @@ export const routes: Routes = [
     {
         path: 'story',
         loadChildren: './story/create-story.module#CreateStoryModule'
+    },
+    {
+        path: 'story/:id',
+        loadChildren: './story/create-story.module#CreateStoryModule',
+        data: {pageTitle: 'Book detail'}
     }
+
 ];
 
 export const routing = RouterModule.forChild(routes);

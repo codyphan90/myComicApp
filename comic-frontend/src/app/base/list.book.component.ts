@@ -38,7 +38,12 @@ export class ListBookComponent extends BaseComponent implements OnInit, AfterVie
         }
     }
 
+    onActionDoubleClicked(event) {
+        this.update(event.rowData.id);
+    }
+
     update(id) {
+        this.router.navigate(['create-story/story/',id]);
     }
 
 
