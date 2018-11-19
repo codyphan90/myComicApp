@@ -1,19 +1,27 @@
-<!--<div class="row">-->
-   <!--<div class=" column left" id="hierarchy-panel">-->
-      <!--Hierarchy Panel-->
-   <!--</div>-->
-   <!--<div class="column middle">-->
-      <!--Canvas tool-->
-
-   <!--</div>-->
-<!--</div>-->
-<div class="row">
-   <div class="column left" style="background-color:#aaa;">
-      <h2>Hierarchy Panel</h2>
-      <p>Some text..</p>
-   </div>
-   <div class="column middle" style="background-color:#bbb;">
-      <h2>Canvas Tool</h2>
-      <p>Some text..</p>
-   </div>
+<div id="content">
+    <div class="row">
+        <article class="col-sm-12 col-md-12 col-lg-6">
+        <div sa-widget color="blue">
+            <div>
+                <div class="widget-body">
+                    <div class="tree smart-form">
+                        <sa-tree-view [items]="demo2" (change)="changeListener($event)"></sa-tree-view>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </article>
+        <article class="col-sm-12 col-md-12 col-lg-6">
+            <div sa-widget color="blue">
+                <div>
+                    <div class="widget-body">
+                        CANVAS TOOL
+                    </div>
+                </div>
+                <div>
+                FACEBOOK Plugins ...
+                </div>
+            </div>
+            </article>
+    </div>
 </div>
