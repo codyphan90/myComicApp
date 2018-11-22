@@ -38,11 +38,13 @@ public class BookService {
         return controllerUtils.getPaginationData(simpleJpaRepository, params);
     }
 
+    public BookEntity getBookDetail(Integer bookId) {
+        return bookRepository.findByIdEquals(bookId);
+    }
+
     @Transactional
-    public BookEntity createBook(BookRequest request) {
-        BookEntity savedBookEntity = request.getBookEntity();
-        savedBookEntity.setUserEntity(request.getUserEntity());
-                bookRepository.save(request.getBookEntity());
+    public BookEntity createBook(BookEntity bookEntity) {
+        BookEntity savedBookEntity = bookRepository.save(bookEntity);
         if (savedBookEntity.getChapterEntityList() != null) {
             savedBookEntity.getChapterEntityList().forEach(chapterEntity -> {
                 chapterEntity.setBookId(savedBookEntity.getId());
@@ -64,5 +66,41 @@ public class BookService {
             });
         }
         return savedBookEntity;
+    }
+
+    @Transactional
+    public BookEntity updateBook(BookEntity oldBookEntity) {
+        BookEntity bookEntity = bookRepository.findByIdEquals(oldBookEntity.getId());
+        if ( bookEntity != null) {
+            deleteFullBook(bookEntity);
+            BookEntity newBookEntity = buildBook(oldBookEntity);
+            return createBook(newBookEntity);
+        }
+        return null;
+    }
+
+    private void deleteFullBook(BookEntity bookEntity) {
+        bookEntity.getChapterEntityList().forEach(chapterEntity -> {
+            chapterEntity.getTopicEntityList().forEach(topicEntity -> {
+                topicEntity.getSubTopicEntityList().forEach(subTopicEntity -> {
+                    subTopicRepository.delete(subTopicEntity);
+                });
+                topicRepository.delete(topicEntity);
+            });
+            chapterRepository.delete(chapterEntity);
+        });
+        bookRepository.delete(bookEntity);
+    }
+
+    private BookEntity buildBook(BookEntity  oldBookEntity) {
+        BookEntity newBookEntity = new BookEntity();
+        newBookEntity.setUserEntity(oldBookEntity.getUserEntity());
+        newBookEntity.setFbId(oldBookEntity.getFbId());
+        newBookEntity.setFbShareCount(oldBookEntity.getFbShareCount());
+        newBookEntity.setFbShareUrl(oldBookEntity.getFbShareUrl());
+        newBookEntity.setName(oldBookEntity.getName());
+        newBookEntity.setPermission(oldBookEntity.getPermission());
+        newBookEntity.setChapterEntityList(oldBookEntity.getChapterEntityList());
+        return newBookEntity;
     }
 }
