@@ -3,10 +3,11 @@ package com.comic.backend.book;
 import com.comic.backend.user.UserEntity;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "book", schema = "comic", catalog = "")
+@Table(name = "book", catalog = "")
 public class BookEntity {
     private int id;
     private String name;
@@ -16,6 +17,8 @@ public class BookEntity {
     private Integer fbShareCount;
     private String fbId;
     private UserEntity userEntity;
+    private List<ChapterEntity> chapterEntityList;
+
 
     @Id
     @Column(name = "id")
@@ -34,6 +37,7 @@ public class BookEntity {
         return name;
     }
 
+
     public void setName(String name) {
         this.name = name;
     }
@@ -45,7 +49,7 @@ public class BookEntity {
 //    }
 //
 //    public void setUserId(int userId) {
-//        this.userId = userId;
+//        this.userId = this.userEntity.getId();
 //    }
 
     @Basic
@@ -112,5 +116,12 @@ public class BookEntity {
         this.userEntity = userEntity;
     }
 
+    @OneToMany(mappedBy = "bookId")
+    public List<ChapterEntity> getChapterEntityList() {
+        return chapterEntityList;
+    }
 
+    public void setChapterEntityList(List<ChapterEntity> chapterEntityList) {
+        this.chapterEntityList = chapterEntityList;
+    }
 }

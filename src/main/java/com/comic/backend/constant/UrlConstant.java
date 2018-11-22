@@ -14,6 +14,7 @@ public class UrlConstant {
     public static final String VALIDATE_EMAIL_URL = "/email-verify";
     public static final String CONNECT_FACEBOOK_URL = "/connect-facebook";
     public static final String BOOK_BASE_URL = "/book";
+    public static final String CREATE_BOOK_URL = "/create";
     public static final String GET_PAGE_URL = "/get-page/";
 
 
