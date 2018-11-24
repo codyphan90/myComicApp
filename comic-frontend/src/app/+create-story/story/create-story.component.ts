@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FadeInTop} from '../../shared/animations/fade-in-top.decorator';
 import {BaseComponent} from "../../base/base.component";
+import {FacebookService, InitParams} from "ngx-facebook";
 
 @FadeInTop()
 @Component({
@@ -9,7 +10,7 @@ import {BaseComponent} from "../../base/base.component";
     styleUrls: ['./create-story.component.css']
 })
 export class CreateStoryComponent extends BaseComponent implements OnInit {
-    constructor() {super(); }
+    constructor(private fb: FacebookService) {super(); }
 
     demo2: any = [
         {"content": "<span><i class=\"fa fa-lg fa-book\"></i>Parent/span>", "expanded": true, "children": [
@@ -70,8 +71,20 @@ export class CreateStoryComponent extends BaseComponent implements OnInit {
     ];
 
     ngOnInit() {
-
+        this.initFB();
     }
+
+    initFB() {
+        let initParams: InitParams = {
+            appId: '163456804604097',
+            cookie: true,
+            xfbml: true,
+            version: 'v2.9',
+        };
+        this.fb.init(initParams);
+    }
+
+
 
     changeListener(payload) {
         console.log('change payload', payload)

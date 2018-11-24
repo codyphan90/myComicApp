@@ -69,11 +69,11 @@ public class BookService {
     }
 
     @Transactional
-    public BookEntity updateBook(BookEntity oldBookEntity) {
-        BookEntity bookEntity = bookRepository.findByIdEquals(oldBookEntity.getId());
+    public BookEntity updateBook(BookEntity updateBookEntity) {
+        BookEntity bookEntity = bookRepository.findByIdEquals(updateBookEntity.getId());
         if ( bookEntity != null) {
             deleteFullBook(bookEntity);
-            BookEntity newBookEntity = buildBook(oldBookEntity);
+            BookEntity newBookEntity = buildBook(updateBookEntity);
             return createBook(newBookEntity);
         }
         return null;

@@ -5,12 +5,14 @@ import {TreeViewModule} from "../../shared/ui/tree-view/tree-view.module";
 import {SmartadminWidgetsModule} from "../../shared/widgets/smartadmin-widgets.module";
 import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
+import {FacebookModule} from "ngx-facebook";
 
 
 @NgModule({
     imports: [
         CreateStoryRoutingModule, TreeViewModule, SmartadminWidgetsModule, CommonModule,
         FormsModule,
+        FacebookModule.forRoot()
     ],
     declarations: [
         CreateStoryComponent
