@@ -1,4 +1,8 @@
 export class BaseComponent {
+
+    book_obj =   {content: "<span><i class=\"fa fa-lg fa-book\"></i> <span contenteditable=\"true\">Book</span></span>", "expanded": true, children: []};
+    chapter_obj =   {content: "<span><i class=\"fa fa-lg fa-pencil-square-o\"></i> <span contenteditable=\"true\">Chapter</span></span>", "expanded": true, children: []};
+
     compType: any = {
         SAVE: "SAVE", UPDATE: "UPDATE"
     };

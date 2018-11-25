@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FadeInTop} from '../../shared/animations/fade-in-top.decorator';
 import {BaseComponent} from "../../base/base.component";
 import {FacebookService, InitParams} from "ngx-facebook";
+import {TreeModel} from 'ng2-tree';
+import {NodeMenuItemAction} from 'ng2-tree';
 
 @FadeInTop()
 @Component({
@@ -10,65 +12,23 @@ import {FacebookService, InitParams} from "ngx-facebook";
     styleUrls: ['./create-story.component.css']
 })
 export class CreateStoryComponent extends BaseComponent implements OnInit {
-    constructor(private fb: FacebookService) {super(); }
+    constructor(private fb: FacebookService) {
+        super();
+    }
 
-    demo2: any = [
-        {"content": "<span><i class=\"fa fa-lg fa-book\"></i>Parent/span>", "expanded": true, "children": [
-                {"content": "<span> Administrators</span>", "expanded": true, "children": [
-                        {"content": "<span> <label class=\"checkbox inline-block\"><input type=\"checkbox\" name=\"checkbox-inline\"><i></i>Michael.Jackson</label> </span>"},
-                        {"content": "<span> <label class=\"checkbox inline-block\"><input type=\"checkbox\" checked=\"checked\" name=\"checkbox-inline\"><i></i>Sunny.Ahmed</label> </span>"},
-                        {"content": "<span> <label class=\"checkbox inline-block\"><input type=\"checkbox\" checked=\"checked\" name=\"checkbox-inline\"><i></i>Jackie.Chan</label> </span>"}
-                    ]},
-                {"content": "<span> <label class=\"checkbox inline-block\"><input type=\"checkbox\" name=\"checkbox-inline\"><i></i>Michael.Jackson</label> </span>"},
-                {"content": "<span> <label class=\"checkbox inline-block\"><input type=\"checkbox\" checked=\"checked\" name=\"checkbox-inline\"><i></i>Sunny.Ahmed</label> </span>"},
-                {"content": "<span> <label class=\"checkbox inline-block\"><input type=\"checkbox\" checked=\"checked\" name=\"checkbox-inline\"><i></i>Jackie.Chan</label> </span>"},
-                {"content": "<span> Child</span>", "expanded": true, "children": [
-                        {"content": "<span><i class=\"icon-leaf\"></i> Grand Child</span>"},
-                        {"content": "<span><i class=\"icon-leaf\"></i> Grand Child</span>"},
-                        {"content": "<span> Grand Child</span>",  "children": [
-                                {"content": "<span> Great Grand Child</span>", "children": [
-                                        {"content": "<span><i class=\"icon-leaf\"></i> Great great Grand Child</span>"},
-                                        {"content": "<span><i class=\"icon-leaf\"></i> Great great Grand Child</span>"}
-                                    ]},
-                                {"content": "<span><i class=\"icon-leaf\"></i> Great great Grand Child</span>"},
-                                {"content": "<span><i class=\"icon-leaf\"></i> Great great Grand Child</span>"},
-                                {"content": "<span><i class=\"icon-leaf\"></i> Great Grand Child</span>"},
-                                {"content": "<span><i class=\"icon-leaf\"></i> Great Grand Child</span>"}
-                            ]},
-                        {"content": "<span> Great Grand Child</span>", "children": [
-                                {"content": "<span><i class=\"icon-leaf\"></i> Great great Grand Child</span>"},
-                                {"content": "<span><i class=\"icon-leaf\"></i> Great great Grand Child</span>"}
-                            ]},
-                        {"content": "<span><i class=\"icon-leaf\"></i> Great great Grand Child</span>"},
-                        {"content": "<span><i class=\"icon-leaf\"></i> Great great Grand Child</span>"},
-                        {"content": "<span><i class=\"icon-leaf\"></i> Great Grand Child</span>"},
-                        {"content": "<span><i class=\"icon-leaf\"></i> Great Grand Child</span>"}
-                    ]},
-                {"content": "<span><i class=\"icon-leaf\"></i> Grand Child</span>"},
-                {"content": "<span><i class=\"icon-leaf\"></i> Grand Child</span>"},
-                {"content": "<span> Grand Child</span>", "children": [
-                        {"content": "<span> Great Grand Child</span>", "children": [
-                                {"content": "<span><i class=\"icon-leaf\"></i> Great great Grand Child</span>"},
-                                {"content": "<span><i class=\"icon-leaf\"></i> Great great Grand Child</span>"}
-                            ]},
-                        {"content": "<span><i class=\"icon-leaf\"></i> Great great Grand Child</span>"},
-                        {"content": "<span><i class=\"icon-leaf\"></i> Great great Grand Child</span>"},
-                        {"content": "<span><i class=\"icon-leaf\"></i> Great Grand Child</span>"},
-                        {"content": "<span><i class=\"icon-leaf\"></i> Great Grand Child</span>"}
-                    ]},
-                {"content": "<span> Great Grand Child</span>", "children": [
-                        {"content": "<span><i class=\"icon-leaf\"></i> Great great Grand Child</span>"},
-                        {"content": "<span><i class=\"icon-leaf\"></i> Great great Grand Child</span>"}
-                    ]},
-                {"content": "<span><i class=\"icon-leaf\"></i> Great great Grand Child</span>"},
-                {"content": "<span><i class=\"icon-leaf\"></i> Great great Grand Child</span>"},
-                {"content": "<span><i class=\"icon-leaf\"></i> Great Grand Child</span>"},
-                {"content": "<span><i class=\"icon-leaf\"></i> Great Grand Child</span>"}
-            ]},
-        {"content": "<span><i class=\"fa fa-lg fa-folder-open\"></i> Parent2</span>", "children": [
-                {"content": "<span><i class=\"icon-leaf\"></i> Child</span>"}
-            ]}
-    ];
+    public tree: TreeModel = {
+        value: 'Programming languages by programming paradigm',
+        children: [
+            {
+                value: 'Object-oriented programming',
+                children: [{value: 'Java'}, {value: 'C++'}, {value: 'C#'}]
+            },
+            {
+                value: 'Prototype-based programming',
+                children: [{value: 'JavaScript'}, {value: 'CoffeeScript'}, {value: 'Lua'}]
+            }
+        ]
+    };
 
     ngOnInit() {
         this.initFB();
@@ -84,9 +44,60 @@ export class CreateStoryComponent extends BaseComponent implements OnInit {
         this.fb.init(initParams);
     }
 
+    settings: {
+        'static': true,
+        'rightMenu': true,
+        'leftMenu': true,
+        'cssClasses': {
+            'expanded': 'fa fa-caret-down fa-lg',
+            'collapsed': 'fa fa-caret-right fa-lg',
+            'leaf': 'fa fa-lg',
+            'empty': 'fa fa-caret-right disabled'
+        },
+        'templates': {
+            'node': '<i class="fa fa-folder-o fa-lg"></i>',
+            'leaf': '<i class="fa fa-file-o fa-lg"></i>',
+            'leftMenu': '<i class="fa fa-navicon fa-lg"></i>'
+        },
+        'menuItems': [
+            { action: NodeMenuItemAction.Custom, name: 'Foo', cssClass: 'fa fa-arrow-right' },
+            { action: NodeMenuItemAction.Custom, name: 'Bar', cssClass: 'fa fa-arrow-right' },
+            { action: NodeMenuItemAction.Custom, name: 'Baz', cssClass: 'fa fa-arrow-right' }
+            ]
+    };
 
+    handleRemoved($event) {
+        console.log('tree model after remove: ' + JSON.stringify(this.tree));
 
-    changeListener(payload) {
-        console.log('change payload', payload)
     }
+
+    handleRenamed($event) {
+
+    }
+
+    handleNextLevel($event) {
+
+    }
+
+    handleCollapsed($event) {
+
+    }
+
+    handleExpanded($event) {
+
+    }
+
+    handleCreated($event) {
+
+    }
+
+    handleMoved($event) {
+
+    }
+
+    handleSelected($event) {
+        console.log('selected');
+    }
+
+
 }
