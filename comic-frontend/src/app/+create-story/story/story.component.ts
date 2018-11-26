@@ -5,6 +5,7 @@ import {FacebookService, InitParams} from "ngx-facebook";
 import {TreeModel} from 'ng2-tree';
 import {ActivatedRoute} from "@angular/router";
 import {BookService} from "../../+service/book.service";
+import {BookNode} from "../../bo/book.node";
 
 @FadeInTop()
 @Component({
@@ -15,24 +16,51 @@ import {BookService} from "../../+service/book.service";
 export class StoryComponent extends BaseComponent implements OnInit {
     id: any;
     type: any;
+    book: any;
+
     constructor(private fb: FacebookService, private route: ActivatedRoute, private bs: BookService) {
         super();
     }
 
-    public tree: TreeModel = {
-        value: 'Programming languages by programming paradigm',
-        settings: this.tree_model_settings,
-        children: [
-            {
-                value: 'Object-oriented programming',
-                children: [{value: 'Java'}, {value: 'C++'}, {value: 'C#'}]
-            },
-            {
-                value: 'Prototype-based programming',
-                children: [{value: 'JavaScript'}, {value: 'CoffeeScript'}, {value: 'Lua'}]
+    public tree: TreeModel;
+
+    buildTreeModelFromBook() {
+        let treeModel: any = {};
+        treeModel.value = this.book.name;
+        let bookChildren: BookNode[] = [];
+        treeModel.children = bookChildren;
+        for (let chapter of this.book.chapterEntityList) {
+            let chapterChildren: BookNode[] = [];
+
+            let chapterNode: BookNode = {
+                value: chapter.name,
+                children: []
+            };
+            chapterNode.children = chapterChildren;
+            bookChildren.push(chapterNode);
+            for (let topic of chapter.topicEntityList) {
+                let topicChildren: BookNode[] = [];
+
+                let topicNode: BookNode = {
+                    value: topic.name,
+                    children: []
+                };
+                topicNode.children = topicChildren;
+                chapterChildren.push(topicNode);
+                for (let subTopic of topic.subTopicEntityList) {
+
+                    let subTopicNode: BookNode = {
+                        value: subTopic.name,
+                        children: []
+                    };
+                    topicChildren.push(subTopicNode);
+                }
             }
-        ]
-    };
+        }
+        treeModel.settings = this.tree_model_settings;
+        this.tree =  treeModel;
+        console.log('tree model: ' + JSON.stringify(this.tree));
+    }
 
     ngOnInit() {
         this.initFB();
@@ -43,7 +71,8 @@ export class StoryComponent extends BaseComponent implements OnInit {
                     console.log('res: ' + JSON.stringify(response));
                     var getResult = response.success;
                     if (getResult == true) {
-
+                        this.book = response.dataResponse;
+                        this.buildTreeModelFromBook();
                     } else {
                         this.errorAlert(response.exceptionMessage);
                     }
@@ -99,6 +128,10 @@ export class StoryComponent extends BaseComponent implements OnInit {
 
     handleSelected($event) {
         console.log('selected');
+    }
+
+    saveBook() {
+        alert(JSON.stringify(this.tree._status));
     }
 
 
