@@ -3,16 +3,19 @@ import {FadeInTop} from '../../shared/animations/fade-in-top.decorator';
 import {BaseComponent} from "../../base/base.component";
 import {FacebookService, InitParams} from "ngx-facebook";
 import {TreeModel} from 'ng2-tree';
-import {NodeMenuItemAction} from 'ng2-tree';
+import {ActivatedRoute} from "@angular/router";
+import {BookService} from "../../+service/book.service";
 
 @FadeInTop()
 @Component({
-    selector: 'create-story',
-    templateUrl: './create-story.component.html',
-    styleUrls: ['./create-story.component.css']
+    selector: 'story',
+    templateUrl: './story.component.html',
+    styleUrls: ['./story.component.css']
 })
-export class CreateStoryComponent extends BaseComponent implements OnInit {
-    constructor(private fb: FacebookService) {
+export class StoryComponent extends BaseComponent implements OnInit {
+    id: any;
+    type: any;
+    constructor(private fb: FacebookService, private route: ActivatedRoute, private bs: BookService) {
         super();
     }
 
@@ -33,6 +36,25 @@ export class CreateStoryComponent extends BaseComponent implements OnInit {
 
     ngOnInit() {
         this.initFB();
+        this.id = this.route.snapshot.paramMap.get('id');
+        if (this.id) {
+            this.type = this.compType.UPDATE;
+            this.bs.getBookById(this.id).subscribe(response => {
+                    console.log('res: ' + JSON.stringify(response));
+                    var getResult = response.success;
+                    if (getResult == true) {
+
+                    } else {
+                        this.errorAlert(response.exceptionMessage);
+                    }
+                },
+                error => {
+                    this.errorAlert("Has error!");
+                })
+
+        } else {
+            this.type = this.compType.SAVE;
+        }
     }
 
     initFB() {

@@ -1,10 +1,10 @@
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
-import {CreateStoryComponent} from "./create-story.component";
+import {StoryComponent} from "./story.component";
 
 const routes: Routes = [{
     path: '',
-    component: CreateStoryComponent,
+    component: StoryComponent,
     data: {pageTitle: 'Create Story'}
 }];
 
@@ -13,5 +13,5 @@ const routes: Routes = [{
     exports: [RouterModule],
     providers: []
 })
-export class CreateStoryRoutingModule {
+export class StoryRoutingModule {
 }

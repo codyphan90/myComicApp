@@ -7,11 +7,11 @@ export const routes: Routes = [
     },
     {
         path: 'story',
-        loadChildren: './story/create-story.module#CreateStoryModule'
+        loadChildren: './story/story.module#StoryModule'
     },
     {
         path: 'story/:id',
-        loadChildren: './story/create-story.module#CreateStoryModule',
+        loadChildren: './story/story.module#StoryModule',
         data: {pageTitle: 'Book detail'}
     }
 

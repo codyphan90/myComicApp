@@ -3,6 +3,7 @@ import {NgModule} from '@angular/core';
 import {SmartadminModule} from '../shared/smartadmin.module'
 
 import {routing} from './create-story.routing';
+import {BookService} from "../+service/book.service";
 
 
 @NgModule({
@@ -11,7 +12,7 @@ import {routing} from './create-story.routing';
         routing,
     ],
     declarations: [],
-    providers: [],
+    providers: [BookService],
 })
 export class CreateStoryModule {
 

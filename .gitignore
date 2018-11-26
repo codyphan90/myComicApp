@@ -26,3 +26,4 @@ dist/
 nbdist/
 .nb-gradle/
 comic-frontend/node_modules
+package-lock.json

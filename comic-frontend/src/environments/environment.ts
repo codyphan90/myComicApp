@@ -13,7 +13,7 @@ export const environment = {
         home_url: HOME_URL + '/#/my-account/detail',
         login_route: LOGIN_ROUTE
     },
-    user_service : {
+    user_service: {
         user_validation_endpoint: USER_SERVICE_BASE + '/login',
         user_register_endpoint: USER_SERVICE_BASE,
         user_reset_password_endpoint: USER_SERVICE_BASE + '/reset-password',
@@ -24,10 +24,11 @@ export const environment = {
         user_connect_facebook_endpoint: USER_SERVICE_BASE + '/connect-facebook'
 
     },
-    user_group_service : {
+    user_group_service: {
         get_user_group_list_endpoint: USER_GROUP_SERVICE_BASE
     },
-    book_service : {
-      get_page_endpoint: BOOK_SERVICE_BASE + '/get-page/'
+    book_service: {
+        get_page_endpoint: BOOK_SERVICE_BASE + '/get-page/',
+        get_book_endpoint: BOOK_SERVICE_BASE + '/'
     }
 };

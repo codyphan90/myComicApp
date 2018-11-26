@@ -37,7 +37,7 @@ public class BookController {
 
     @RequestMapping(value = UrlConstant.GET_BOOK_DETAIL, method = RequestMethod.GET)
     public @ResponseBody
-    ResponseEntity createBook(@PathVariable("book_id") String bookId) {
+    ResponseEntity getBook(@PathVariable("book_id") String bookId) {
         logger.info("========== Start getting book ==========");
         try {
             BookEntity bookEntity = bookService.getBookDetail(Integer.parseInt(bookId));
@@ -53,7 +53,7 @@ public class BookController {
 
     @RequestMapping(method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity createBook(@RequestBody BookRequest bookRequest ) {
+    ResponseEntity getBook(@RequestBody BookRequest bookRequest ) {
         logger.info("========== Start creating book ==========");
         try {
             BookEntity saveBookEntity = bookService.createBook(bookRequest.getBookEntity());
