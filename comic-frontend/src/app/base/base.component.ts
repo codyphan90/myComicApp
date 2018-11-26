@@ -1,7 +1,26 @@
+import {NodeMenuItemAction} from "ng2-tree";
+
 export class BaseComponent {
 
-    book_obj =   {content: "<span><i class=\"fa fa-lg fa-book\"></i> <span contenteditable=\"true\">Book</span></span>", "expanded": true, children: []};
-    chapter_obj =   {content: "<span><i class=\"fa fa-lg fa-pencil-square-o\"></i> <span contenteditable=\"true\">Chapter</span></span>", "expanded": true, children: []};
+    tree_model_settings = {
+        'cssClasses': {
+            'expanded': 'fa fa-caret-down fa-lg',
+            'collapsed': 'fa fa-caret-right fa-lg',
+            'leaf': 'fa fa-lg',
+            'empty': 'fa fa-caret-right disabled'
+        },
+        'templates': {
+            'node': '<i class="fa fa-book fa-lg"></i>',
+            'leaf': '<i class="fa fa-pencil-square-o fa-lg"></i>',
+            'leftMenu': '<i class="fa fa-navicon fa-lg"></i>'
+        },
+        'menuItems': [
+            { action: NodeMenuItemAction.NewFolder, name: 'Add parent node', cssClass: 'fa fa-arrow-right' },
+            { action: NodeMenuItemAction.NewTag, name: 'Add child node', cssClass: 'fa fa-arrow-right' },
+            { action: NodeMenuItemAction.Remove, name: 'Delete node', cssClass: 'fa fa-arrow-right' },
+            { action: NodeMenuItemAction.Rename, name: 'Rename', cssClass: 'fa fa-arrow-right' }
+        ]
+    };
 
     compType: any = {
         SAVE: "SAVE", UPDATE: "UPDATE"
