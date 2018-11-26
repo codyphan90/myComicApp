@@ -18,6 +18,7 @@ export class CreateStoryComponent extends BaseComponent implements OnInit {
 
     public tree: TreeModel = {
         value: 'Programming languages by programming paradigm',
+        settings: this.tree_model_settings,
         children: [
             {
                 value: 'Object-oriented programming',
@@ -44,27 +45,6 @@ export class CreateStoryComponent extends BaseComponent implements OnInit {
         this.fb.init(initParams);
     }
 
-    settings: {
-        'static': true,
-        'rightMenu': true,
-        'leftMenu': true,
-        'cssClasses': {
-            'expanded': 'fa fa-caret-down fa-lg',
-            'collapsed': 'fa fa-caret-right fa-lg',
-            'leaf': 'fa fa-lg',
-            'empty': 'fa fa-caret-right disabled'
-        },
-        'templates': {
-            'node': '<i class="fa fa-folder-o fa-lg"></i>',
-            'leaf': '<i class="fa fa-file-o fa-lg"></i>',
-            'leftMenu': '<i class="fa fa-navicon fa-lg"></i>'
-        },
-        'menuItems': [
-            { action: NodeMenuItemAction.Custom, name: 'Foo', cssClass: 'fa fa-arrow-right' },
-            { action: NodeMenuItemAction.Custom, name: 'Bar', cssClass: 'fa fa-arrow-right' },
-            { action: NodeMenuItemAction.Custom, name: 'Baz', cssClass: 'fa fa-arrow-right' }
-            ]
-    };
 
     handleRemoved($event) {
         console.log('tree model after remove: ' + JSON.stringify(this.tree));
