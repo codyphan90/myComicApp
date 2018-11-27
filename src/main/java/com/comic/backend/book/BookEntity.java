@@ -9,7 +9,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "book", catalog = "")
 public class BookEntity {
-    private int id;
+    private Integer id;
     private String name;
 //    private int userId;
     private Integer permission;
@@ -23,11 +23,11 @@ public class BookEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

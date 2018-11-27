@@ -5,7 +5,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "sub_topic", schema = "comic", catalog = "")
 public class SubTopicEntity {
-    private int id;
+    private Integer id;
     private String name;
     private Integer topicId;
     private String content;
@@ -15,11 +15,11 @@ public class SubTopicEntity {
     @Basic
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

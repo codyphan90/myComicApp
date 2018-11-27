@@ -6,7 +6,7 @@ import java.util.List;
 @Entity
 @Table(name = "chapter", catalog = "")
 public class ChapterEntity {
-    private int id;
+    private Integer id;
     private String name;
     private Integer bookId;
     private String description;
@@ -16,11 +16,11 @@ public class ChapterEntity {
     @Basic
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

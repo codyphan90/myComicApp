@@ -1,6 +1,6 @@
 package com.comic.backend.book;
 
-import com.comic.backend.request.BookRequest;
+import com.comic.backend.user.UserEntity;
 import com.comic.backend.utils.ControllerUtils;
 import com.comic.backend.utils.DataTablePaginationResponse;
 import org.apache.logging.log4j.LogManager;
@@ -8,10 +8,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MultiValueMap;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class BookService {
@@ -79,6 +81,35 @@ public class BookService {
         return null;
     }
 
+    public BookEntity copyBook(Integer bookId, Integer userId) {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(userId);
+
+        BookEntity bookEntity = bookRepository.findByIdEquals(bookId);
+        BookEntity newBook = buildBook(bookEntity);
+        newBook.setUserEntity(userEntity);
+        newBook.setPermission(1);
+        List<ChapterEntity> chapterEntities = new ArrayList<>();
+        bookEntity.getChapterEntityList().forEach(chapterEntity -> {
+            ChapterEntity newChapter = buildChapter(chapterEntity);
+            List<TopicEntity> topicEntities = new ArrayList<>();
+            chapterEntity.getTopicEntityList().forEach(topicEntity -> {
+                TopicEntity newTopicEntity = buildTopic(topicEntity);
+                List<SubTopicEntity> subTopicEntities = new ArrayList<>();
+                topicEntity.getSubTopicEntityList().forEach(subTopicEntity -> {
+                    SubTopicEntity newSubTopicEntity = buildSubTopic(subTopicEntity);
+                    subTopicEntities.add(newSubTopicEntity);
+                });
+                newTopicEntity.setSubTopicEntityList(subTopicEntities);
+                topicEntities.add(newTopicEntity);
+            });
+            newChapter.setTopicEntityList(topicEntities);
+            chapterEntities.add(newChapter);
+        });
+        newBook.setChapterEntityList(chapterEntities);
+        return createBook(newBook);
+    }
+
     private void deleteFullBook(BookEntity bookEntity) {
         bookEntity.getChapterEntityList().forEach(chapterEntity -> {
             chapterEntity.getTopicEntityList().forEach(topicEntity -> {
@@ -92,7 +123,7 @@ public class BookService {
         bookRepository.delete(bookEntity);
     }
 
-    private BookEntity buildBook(BookEntity  oldBookEntity) {
+    private BookEntity buildBook(BookEntity oldBookEntity) {
         BookEntity newBookEntity = new BookEntity();
         newBookEntity.setUserEntity(oldBookEntity.getUserEntity());
         newBookEntity.setFbId(oldBookEntity.getFbId());
@@ -103,4 +134,27 @@ public class BookService {
         newBookEntity.setChapterEntityList(oldBookEntity.getChapterEntityList());
         return newBookEntity;
     }
+
+    private ChapterEntity buildChapter(ChapterEntity chapterEntity) {
+        ChapterEntity newChapter = new ChapterEntity();
+        newChapter.setName(chapterEntity.getName());
+        newChapter.setDescription(chapterEntity.getDescription());
+        return newChapter;
+    }
+
+    private TopicEntity buildTopic(TopicEntity topicEntity) {
+        TopicEntity newTopic = new TopicEntity();
+        newTopic.setName(topicEntity.getName());
+        newTopic.setDescription(topicEntity.getDescription());
+        return newTopic;
+    }
+
+    private SubTopicEntity buildSubTopic(SubTopicEntity subTopicEntity) {
+        SubTopicEntity newSubTopic = new SubTopicEntity();
+        newSubTopic.setName(subTopicEntity.getName());
+        newSubTopic.setDescription(subTopicEntity.getDescription());
+        newSubTopic.setContent(subTopicEntity.getContent());
+        return newSubTopic;
+    }
+
 }

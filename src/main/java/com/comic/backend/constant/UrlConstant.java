@@ -17,6 +17,7 @@ public class UrlConstant {
     public static final String CREATE_BOOK_URL = "/create";
     public static final String GET_PAGE_URL = "/get-page/";
     public static final String GET_BOOK_DETAIL = "/{book_id}";
+    public static final String COPY_BOOK = "/{book_id}/copy/{user_id}";
 
 
 }

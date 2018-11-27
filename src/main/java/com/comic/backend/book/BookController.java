@@ -81,4 +81,23 @@ public class BookController {
             return new ResponseEntity<>(false, e.getMessage());
         }
     }
+
+
+    @RequestMapping(value = UrlConstant.COPY_BOOK, method = RequestMethod.GET)
+    public @ResponseBody
+    ResponseEntity copyBook(@PathVariable("book_id") Integer bookId,
+                            @PathVariable("user_id") Integer userId) {
+        logger.info("========== Start copying book ==========");
+        try {
+            BookEntity newBook = bookService.copyBook(bookId, userId);
+            if (newBook != null) {
+                return new ResponseEntity(true, String.format("Book copy successfully to id %s", newBook.getId()));
+            }
+            return new ResponseEntity<>(false, "Book not Found");
+
+        } catch (Exception e) {
+            logger.error(SYSTEM_ERROR_MESSAGE, e);
+            return new ResponseEntity<>(false, e.getMessage());
+        }
+    }
 }

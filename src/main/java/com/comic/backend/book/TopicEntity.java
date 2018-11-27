@@ -6,9 +6,9 @@ import java.util.List;
 @Entity
 @Table(name = "topic", catalog = "")
 public class TopicEntity {
-    private int id;
+    private Integer id;
     private String name;
-    private int chapterId;
+    private Integer chapterId;
     private String description;
 
     private List<SubTopicEntity> subTopicEntityList;
@@ -17,11 +17,11 @@ public class TopicEntity {
     @Basic
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -37,11 +37,11 @@ public class TopicEntity {
 
     @Basic
     @Column(name = "chapter_id")
-    public int getChapterId() {
+    public Integer getChapterId() {
         return chapterId;
     }
 
-    public void setChapterId(int chapterId) {
+    public void setChapterId(Integer chapterId) {
         this.chapterId = chapterId;
     }
 
