@@ -5,7 +5,7 @@
             <div>
                 <div class="widget-body">
                     <div class="tree smart-form">
-                        <tree [tree]="tree"       [settings]="settings"
+                        <tree #bookTree [tree]="tree"       [settings]="settings"
                               (nodeRemoved)="handleRemoved($event)"
                               (nodeRenamed)="handleRenamed($event)"
                               (nodeSelected)="handleSelected($event)"
@@ -16,7 +16,7 @@
                               (loadNextLevel)="handleNextLevel($event)"></tree>
                     </div>
 
-                    <button (click)="saveBook()" class="btn btn-primary">
+                    <button (click)="updateBook()" class="btn btn-primary">
                         <i class="fa fa-save"> </i> Save Book
                     </button>
                 </div>

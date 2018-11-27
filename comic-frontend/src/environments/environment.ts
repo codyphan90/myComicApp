@@ -29,6 +29,7 @@ export const environment = {
     },
     book_service: {
         get_page_endpoint: BOOK_SERVICE_BASE + '/get-page/',
-        get_book_endpoint: BOOK_SERVICE_BASE + '/'
+        get_book_endpoint: BOOK_SERVICE_BASE + '/',
+        update_book_endpoint: BOOK_SERVICE_BASE
     }
 };

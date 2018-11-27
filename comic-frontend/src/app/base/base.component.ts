@@ -15,8 +15,7 @@ export class BaseComponent {
             'leftMenu': '<i class="fa fa-navicon fa-lg"></i>'
         },
         'menuItems': [
-            { action: NodeMenuItemAction.NewFolder, name: 'Add parent node', cssClass: 'fa fa-arrow-right' },
-            { action: NodeMenuItemAction.NewTag, name: 'Add child node', cssClass: 'fa fa-arrow-right' },
+            { action: NodeMenuItemAction.NewFolder, name: 'Add node', cssClass: 'fa fa-arrow-right' },
             { action: NodeMenuItemAction.Remove, name: 'Delete node', cssClass: 'fa fa-arrow-right' },
             { action: NodeMenuItemAction.Rename, name: 'Rename', cssClass: 'fa fa-arrow-right' }
         ]

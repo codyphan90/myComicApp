@@ -4,7 +4,9 @@ import {BaseComponent} from "./base.component";
 import {environment} from "../../environments/environment";
 import {AuthService} from "../core/_auth/auth.service";
 import {listType} from "../../environments/constants";
+
 declare var $: any;
+
 @Component({
     selector: 'book-list',
     templateUrl: './list.book.component.html'
@@ -16,11 +18,16 @@ export class ListBookComponent extends BaseComponent implements OnInit, AfterVie
 
 
     id: string;
-    options:any;
+    options: any;
 
-    static renderActionButton(row): string {
-        var temp = '<button name="Edit" href="javascript:void(0)"><i class="fa fa-edit"></i></button>'
-            + '<button name="Delete" href="javascript:void(0)"><i class="fa fa-remove"></i></button>';
+    renderActionButton(row): string {
+        var temp = '';
+        if (this.type == listType.MINE) {
+            temp = '<button name="Edit" href="javascript:void(0)"><i class="fa fa-edit"></i></button>'
+                + '<button name="Delete" href="javascript:void(0)"><i class="fa fa-remove"></i></button>';
+        } else if (row.permission == 2) {
+            temp = '<button name="Copy" href="javascript:void(0)"><i class="fa fa-copy"></i></button>';
+        }
         return temp;
     }
 
@@ -35,6 +42,10 @@ export class ListBookComponent extends BaseComponent implements OnInit, AfterVie
                 this.confirmDelete(event.rowData.id);
 
                 break;
+            case  'Copy':
+                this.copyBook(event.rowData.id);
+
+                break;
         }
     }
 
@@ -43,7 +54,7 @@ export class ListBookComponent extends BaseComponent implements OnInit, AfterVie
     }
 
     update(id) {
-        this.router.navigate(['create-story/story/',id]);
+        this.router.navigate(['create-story/story/', id]);
     }
 
 
@@ -77,11 +88,12 @@ export class ListBookComponent extends BaseComponent implements OnInit, AfterVie
             type_data = this.as.getUserId();
         }
         var data = {type: this.type.code, type_data: type_data};
+        var self = this;
         this.options = this.getDTOptionsWithData(environment.book_service.get_page_endpoint, [{data: "name"},
             {
                 data: null,
                 render: function (data, type, row, meta) {
-                    return ListBookComponent.renderActionButton(row);
+                    return self.renderActionButton(row);
                 }
             }
         ], data);
@@ -89,5 +101,9 @@ export class ListBookComponent extends BaseComponent implements OnInit, AfterVie
 
     ngAfterViewInit() {
 
+    }
+
+    private copyBook(id: any) {
+        console.log('copy book, id: ' + id);
     }
 }
