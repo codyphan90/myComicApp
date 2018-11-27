@@ -59,6 +59,9 @@ export class StoryComponent extends BaseComponent implements OnInit {
             }
         }
         treeModel.settings = this.tree_model_settings;
+        if (this.book.userEntity.id != this.as.getUserId()) {
+            treeModel.settings.menuItems = [];
+        }
         this.tree = treeModel;
         console.log('tree model: ' + JSON.stringify(this.tree));
     }
@@ -84,6 +87,12 @@ export class StoryComponent extends BaseComponent implements OnInit {
 
         } else {
             this.type = this.compType.SAVE;
+            let treeModel: any = {};
+            treeModel.value = '...';
+            let bookChildren: BookNode[] = [];
+            treeModel.children = bookChildren;
+            treeModel.settings = this.tree_model_settings;
+            this.tree = treeModel;
         }
     }
 
@@ -136,7 +145,9 @@ export class StoryComponent extends BaseComponent implements OnInit {
         bookEntity.name = treeModel.value;
         bookEntity.userEntity = {id: this.as.getUserId()};
         bookEntity.chapterEntityList = [];
-        bookEntity.id = this.id;
+        if (this.type == this.compType.UPDATE) {
+            bookEntity.id = this.id;
+        }
 
         for (let chapterModel of treeModel.children) {
             var chapterEntity: any = {};
@@ -161,21 +172,37 @@ export class StoryComponent extends BaseComponent implements OnInit {
         return bookEntity;
     }
 
-    updateBook() {
+    saveOrUpdateBook() {
         var bookEntity: any = this.buildBookEntityFromModel(this.bookTree.getController().toTreeModel());
         console.log('save book: ' + JSON.stringify(bookEntity));
-        this.bs.update(bookEntity).subscribe(response => {
-                console.log('res: ' + JSON.stringify(response));
-                var updateResult = response.success;
-                if (updateResult == true) {
-                    this.successAlert("Update book success!");
-                } else {
-                    this.errorAlert(response.exceptionMessage);
-                }
-            },
-            error => {
-                this.errorAlert("Has error!");
-            })
+
+        if (this.type == this.compType.UPDATE) {
+            this.bs.update(bookEntity).subscribe(response => {
+                    console.log('res: ' + JSON.stringify(response));
+                    var updateResult = response.success;
+                    if (updateResult == true) {
+                        this.successAlert("Update book success!");
+                    } else {
+                        this.errorAlert(response.exceptionMessage);
+                    }
+                },
+                error => {
+                    this.errorAlert("Has error!");
+                })
+        } else {
+            this.bs.save(bookEntity).subscribe(response => {
+                    console.log('res: ' + JSON.stringify(response));
+                    var createResult = response.success;
+                    if (createResult == true) {
+                        this.successAlert("Create book success!");
+                    } else {
+                        this.errorAlert(response.exceptionMessage);
+                    }
+                },
+                error => {
+                    this.errorAlert("Has error!");
+                })
+        }
     }
 
 

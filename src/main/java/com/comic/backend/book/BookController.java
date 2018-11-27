@@ -53,7 +53,7 @@ public class BookController {
 
     @RequestMapping(method = RequestMethod.POST)
     public @ResponseBody
-    ResponseEntity getBook(@RequestBody BookRequest bookRequest ) {
+    ResponseEntity createBook(@RequestBody BookRequest bookRequest ) {
         logger.info("========== Start creating book ==========");
         try {
             BookEntity saveBookEntity = bookService.createBook(bookRequest.getBookEntity());

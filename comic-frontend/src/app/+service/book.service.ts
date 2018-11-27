@@ -26,7 +26,7 @@ export class BookService extends AbstractService {
 
 
     public update(book): any {
-        console.log("book: " + JSON.stringify(book));
+        console.log("update book: " + JSON.stringify(book));
         const headers = new HttpHeaders({
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json',
@@ -39,6 +39,22 @@ export class BookService extends AbstractService {
 
         let bookRequest = {bookEntity: book};
         return this.http.put(environment.book_service.update_book_endpoint , bookRequest, options);
+    }
+
+    public save(book): any {
+        console.log("save book: " + JSON.stringify(book));
+        const headers = new HttpHeaders({
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+        });
+
+        const options = {
+            headers: headers
+        };
+
+        let bookRequest = {bookEntity: book};
+        return this.http.post(environment.book_service.update_book_endpoint , bookRequest, options);
     }
 
 

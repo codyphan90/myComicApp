@@ -1,6 +1,9 @@
 <div id="content">
     <div class="column">
         <book-list [type]="LIST_TYPE.MINE"></book-list>
+        <button (click)="createBook()" class="btn btn-primary">
+           <i class="fa fa-book"></i> Create book
+        </button>
     </div>
 
     <div class="column">
