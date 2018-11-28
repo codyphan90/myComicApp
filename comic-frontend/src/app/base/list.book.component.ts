@@ -41,7 +41,7 @@ export class ListBookComponent extends BaseComponent implements OnInit, AfterVie
 
                 break;
             case  'Delete':
-                this.confirmDelete(event.rowData.id);
+                this.delete(event.rowData.id);
 
                 break;
             case  'Copy':
@@ -59,11 +59,22 @@ export class ListBookComponent extends BaseComponent implements OnInit, AfterVie
         this.router.navigate(['create-story/story/', id]);
     }
 
-
-    confirmDelete(id) {
-    }
-
     delete(id) {
+        if (this.confirm("Do you want to delete this book?")) {
+            this.bs.delete(id).subscribe(response => {
+                    console.log('res: ' + JSON.stringify(response));
+                    var deleteResult = response.success;
+                    if (deleteResult == true) {
+                        this.successAlert("Delete book success!");
+                        this.refreshDT();
+                    } else {
+                        this.errorAlert(response.exceptionMessage);
+                    }
+                },
+                error => {
+                    this.errorAlert("Has error!");
+                })
+        }
     }
 
     constructor(private router: Router, private route: ActivatedRoute, private  as: AuthService, private bs: BookService, private es: EventService) {

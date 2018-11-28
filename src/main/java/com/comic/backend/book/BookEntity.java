@@ -1,5 +1,7 @@
 package com.comic.backend.book;
 
+import com.comic.backend.constant.Permission;
+import com.comic.backend.constant.Status;
 import com.comic.backend.user.UserEntity;
 
 import javax.persistence.*;
@@ -7,18 +9,18 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "book", catalog = "")
+@Table(name = "book")
 public class BookEntity {
     private Integer id;
     private String name;
 //    private int userId;
-    private Integer permission;
+    private Integer permission = Permission.READ_ONLY.getValue();
     private String fbShareUrl;
     private Integer fbShareCount;
     private String fbId;
     private UserEntity userEntity;
     private List<ChapterEntity> chapterEntityList;
-
+    private Integer status = Status.ACTIVE.getValue();
 
     @Id
     @Column(name = "id")
@@ -123,5 +125,15 @@ public class BookEntity {
 
     public void setChapterEntityList(List<ChapterEntity> chapterEntityList) {
         this.chapterEntityList = chapterEntityList;
+    }
+
+    @Basic
+    @Column(name = "status")
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

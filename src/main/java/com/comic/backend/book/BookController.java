@@ -65,6 +65,23 @@ public class BookController {
         }
     }
 
+    @RequestMapping(value = UrlConstant.SOFT_DELETE_BOOK_URL, method = RequestMethod.PUT)
+    public @ResponseBody
+    ResponseEntity softDeleteBook(@PathVariable("book_id") Integer bookId ) {
+        logger.info("========== Start soft  book ==========");
+        try {
+            BookEntity bookEntity = bookService.getBookDetail(bookId);
+            if(bookEntity != null) {
+                bookService.softDeleteBook(bookEntity);
+                return new ResponseEntity<>(true, "Delete book successfully!");
+            }
+            return new ResponseEntity<>(false, "Book not Found");
+        } catch (Exception e) {
+            logger.error(SYSTEM_ERROR_MESSAGE, e);
+            return new ResponseEntity<>(false, e.getMessage());
+        }
+    }
+
     @RequestMapping(method = RequestMethod.PUT)
     public @ResponseBody
     ResponseEntity updateBook(@RequestBody BookRequest bookRequest ) {

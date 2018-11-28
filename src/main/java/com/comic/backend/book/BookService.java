@@ -1,5 +1,6 @@
 package com.comic.backend.book;
 
+import com.comic.backend.constant.Status;
 import com.comic.backend.user.UserEntity;
 import com.comic.backend.utils.ControllerUtils;
 import com.comic.backend.utils.DataTablePaginationResponse;
@@ -88,7 +89,6 @@ public class BookService {
         BookEntity bookEntity = bookRepository.findByIdEquals(bookId);
         BookEntity newBook = buildBook(bookEntity);
         newBook.setUserEntity(userEntity);
-        newBook.setPermission(1);
         List<ChapterEntity> chapterEntities = new ArrayList<>();
         bookEntity.getChapterEntityList().forEach(chapterEntity -> {
             ChapterEntity newChapter = buildChapter(chapterEntity);
@@ -131,6 +131,7 @@ public class BookService {
         newBookEntity.setFbShareUrl(oldBookEntity.getFbShareUrl());
         newBookEntity.setName(oldBookEntity.getName());
         newBookEntity.setPermission(oldBookEntity.getPermission());
+        newBookEntity.setStatus(oldBookEntity.getStatus());
         newBookEntity.setChapterEntityList(oldBookEntity.getChapterEntityList());
         return newBookEntity;
     }
@@ -157,4 +158,9 @@ public class BookService {
         return newSubTopic;
     }
 
+    @Transactional
+    public void softDeleteBook(BookEntity bookEntity) {
+        bookEntity.setStatus(Status.IS_DELETED.getValue());
+        bookRepository.save(bookEntity);
+    }
 }

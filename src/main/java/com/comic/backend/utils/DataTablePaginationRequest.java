@@ -1,5 +1,6 @@
 package com.comic.backend.utils;
 
+import com.comic.backend.constant.Status;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -115,7 +116,8 @@ public class DataTablePaginationRequest<T> {
             specifications = Specifications.where(filterByManyToOneField("isAdmin", new KeyValueObj("isAdmin", "userEntity"), "1"));
         }
 
-        return specifications;
+
+        return (specifications == null) ? null : specifications.and(filterEqualByFieldName("status", Status.ACTIVE.getValue() + ""));
     }
 
     public Specification<T> filterByFieldName(final String fieldName, final String filterValue) {

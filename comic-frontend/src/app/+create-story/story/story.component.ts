@@ -67,7 +67,7 @@ export class StoryComponent extends BaseComponent implements OnInit {
     }
 
     isMyBook() {
-        return (this.book.userEntity.id == this.as.getUserId());
+        return ((this.type == this.compType.SAVE)  || (this.book.userEntity.id == this.as.getUserId()));
     }
 
     ngOnInit() {
