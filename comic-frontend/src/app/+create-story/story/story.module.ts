@@ -6,13 +6,14 @@ import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {FacebookModule} from "ngx-facebook";
 import { TreeModule } from 'ng2-tree';
+import {AppModule} from "../../../fabric/app.module";
 
 
 @NgModule({
     imports: [
         StoryRoutingModule, SmartadminWidgetsModule, CommonModule,
         FormsModule, TreeModule,
-        FacebookModule.forRoot()
+        FacebookModule.forRoot(), AppModule
     ],
     declarations: [
         StoryComponent

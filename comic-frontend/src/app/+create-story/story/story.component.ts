@@ -2,13 +2,14 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {FadeInTop} from '../../shared/animations/fade-in-top.decorator';
 import {BaseComponent} from "../../base/base.component";
 import {FacebookService, InitParams} from "ngx-facebook";
-import {TreeModel} from 'ng2-tree';
+import {NodeEvent, TreeModel} from 'ng2-tree';
 import {ActivatedRoute} from "@angular/router";
 import {BookService} from "../../+service/book.service";
 import {BookNode} from "../../bo/book.node";
 import {AuthService} from "../../core/_auth/auth.service";
+import {treeNodeType} from "../../../environments/constants";
+import {AppComponent} from "../../../fabric/app.component";
 
-@FadeInTop()
 @Component({
     selector: 'story',
     templateUrl: './story.component.html',
@@ -19,24 +20,31 @@ export class StoryComponent extends BaseComponent implements OnInit {
     type: any;
     book: any;
 
+    @ViewChild('fabric') fabricComponent : AppComponent;
+
     constructor(private fb: FacebookService, private route: ActivatedRoute, private bs: BookService, private as: AuthService) {
         super();
     }
 
     public tree: TreeModel;
     @ViewChild('bookTree') bookTree;
+    showFabric: boolean = true;
 
     buildTreeModelFromBook() {
         let treeModel: any = {};
         treeModel.value = this.book.name;
         let bookChildren: BookNode[] = [];
         treeModel.children = bookChildren;
+        treeModel.icon = "fa fa-book";
+        treeModel.type = treeNodeType.BOOK;
         for (let chapter of this.book.chapterEntityList) {
             let chapterChildren: BookNode[] = [];
 
             let chapterNode: BookNode = {
                 value: chapter.name,
-                children: []
+                children: [],
+                icon : "fa fa-pencil",
+                type : treeNodeType.CHAPTER
             };
             chapterNode.children = chapterChildren;
             bookChildren.push(chapterNode);
@@ -45,14 +53,19 @@ export class StoryComponent extends BaseComponent implements OnInit {
 
                 let topicNode: BookNode = {
                     value: topic.name,
-                    children: []
+                    children: [],
+                    icon : "fa fa-pencil",
+                    type:treeNodeType.TOPIC
                 };
                 topicNode.children = topicChildren;
                 chapterChildren.push(topicNode);
                 for (let subTopic of topic.subTopicEntityList) {
-                    let subTopicNode: BookNode = {
+                    let subTopicNode = {
                         value: subTopic.name,
-                        children: []
+                        children: [],
+                        icon : "fa fa-pencil",
+                        type: treeNodeType.SUB_TOPIC,
+                        content: subTopic.content
                     };
                     topicChildren.push(subTopicNode);
                 }
@@ -67,7 +80,7 @@ export class StoryComponent extends BaseComponent implements OnInit {
     }
 
     isMyBook() {
-        return ((this.type == this.compType.SAVE)  || (this.book.userEntity.id == this.as.getUserId()));
+        return ((!this.book)  || (this.book.userEntity.id == this.as.getUserId()));
     }
 
     ngOnInit() {
@@ -93,6 +106,7 @@ export class StoryComponent extends BaseComponent implements OnInit {
             this.type = this.compType.SAVE;
             let treeModel: any = {};
             treeModel.value = '...';
+            treeModel.type = treeNodeType.BOOK;
             let bookChildren: BookNode[] = [];
             treeModel.children = bookChildren;
             treeModel.settings = this.tree_model_settings;
@@ -132,7 +146,12 @@ export class StoryComponent extends BaseComponent implements OnInit {
 
     }
 
-    handleCreated($event) {
+    handleCreated(e: NodeEvent) {
+        var parentNodeType = e.node.parent.toTreeModel().type;
+        console.log('parent node type: ' + parentNodeType);
+        var  newTreeModel: TreeModel = e.node.toTreeModel();
+        newTreeModel.type = parentNodeType + 1;
+        const treeController = this.bookTree.getControllerByNodeId(e.node.id);
 
     }
 
@@ -140,8 +159,18 @@ export class StoryComponent extends BaseComponent implements OnInit {
 
     }
 
-    handleSelected($event) {
-        console.log('selected');
+    handleSelected(e: NodeEvent) {
+        console.log('node type: ' + e.node.toTreeModel().type);
+        var nodeType = e.node.toTreeModel().type;
+        if (nodeType == treeNodeType.SUB_TOPIC) {
+            this.showFabric = true;
+            var content = e.node.toTreeModel().content;
+            if (this.fabricComponent) {
+                console.log('set canvas content: ' + content);
+                localStorage.setItem('Kanvas', content);
+                this.fabricComponent.loadCanvasFromJSON();
+            }
+        }
     }
 
     buildBookEntityFromModel(treeModel: TreeModel): any {
@@ -208,6 +237,5 @@ export class StoryComponent extends BaseComponent implements OnInit {
                 })
         }
     }
-
 
 }

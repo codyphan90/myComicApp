@@ -1,40 +1,35 @@
 <div id="content">
     <div class="row">
-        <article class="col-sm-12 col-md-12 col-lg-6">
-        <div sa-widget color="blue">
-            <div>
-                <div class="widget-body">
-                    <div class="tree smart-form">
-                        <tree #bookTree [tree]="tree"       [settings]="settings"
-                              (nodeRemoved)="handleRemoved($event)"
-                              (nodeRenamed)="handleRenamed($event)"
-                              (nodeSelected)="handleSelected($event)"
-                              (nodeMoved)="handleMoved($event)"
-                              (nodeCreated)="handleCreated($event)"
-                              (nodeExpanded)="handleExpanded($event)"
-                              (nodeCollapsed)="handleCollapsed($event)"
-                              (loadNextLevel)="handleNextLevel($event)"></tree>
-                    </div>
+        <div class="col-md-auto">
+            <tree #bookTree [tree]="tree" [settings]="settings"
+                  (nodeRemoved)="handleRemoved($event)"
+                  (nodeRenamed)="handleRenamed($event)"
+                  (nodeSelected)="handleSelected($event)"
+                  (nodeMoved)="handleMoved($event)"
+                  (nodeCreated)="handleCreated($event)"
+                  (nodeExpanded)="handleExpanded($event)"
+                  (nodeCollapsed)="handleCollapsed($event)"
+                  (loadNextLevel)="handleNextLevel($event)">
 
-                    <button *ngIf="isMyBook()" (click)="saveOrUpdateBook()" class="btn btn-primary">
-                        <i class="fa fa-save"> </i> Save Book
-                    </button>
-                </div>
+                <ng-template let-node>
+                    <i class="fa {{node.icon}}"></i>
+                    <span class="node-name" [innerHTML]="node.value"></span>
+                </ng-template>
+            </tree>
+
+            <button *ngIf="isMyBook()" (click)="saveOrUpdateBook()" class="btn btn-primary">
+                <i class="fa fa-save"> </i> Save Book
+            </button>
+        </div>
+        <div class="col">
+            <div>
+                <fabric-component *ngIf="showFabric" #fabric ></fabric-component>
+            </div>
+
+            <div>
+                <fb-like href="https://facebook.com" showFaces="true"></fb-like>
+                <fb-comments></fb-comments>
             </div>
         </div>
-        </article>
-        <article class="col-sm-12 col-md-12 col-lg-6">
-            <div sa-widget color="blue">
-                <div>
-                    <div class="widget-body">
-                        CANVAS TOOL
-                    </div>
-                </div>
-                <div>
-                    <fb-like href="https://facebook.com" showFaces="true"></fb-like>
-                    <fb-comments></fb-comments>
-                </div>
-            </div>
-        </article>
     </div>
 </div>

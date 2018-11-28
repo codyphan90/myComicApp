@@ -41,9 +41,6 @@ export class BaseComponent {
         processing: true,
         serverSide: true,
         ajax: {url:'',data:null},
-        buttons: [
-            'copy', 'pdf'
-        ],
         pageLength: 10,
         paginationLength: true,
         bFilter: false,
