@@ -59,11 +59,15 @@ export class StoryComponent extends BaseComponent implements OnInit {
             }
         }
         treeModel.settings = this.tree_model_settings;
-        if (this.book.userEntity.id != this.as.getUserId()) {
+        if (!this.isMyBook()) {
             treeModel.settings.menuItems = [];
         }
         this.tree = treeModel;
         console.log('tree model: ' + JSON.stringify(this.tree));
+    }
+
+    isMyBook() {
+        return (this.book.userEntity.id == this.as.getUserId());
     }
 
     ngOnInit() {

@@ -4,6 +4,8 @@ import {ListBookComponent} from './list.book.component';
 import { FormsModule } from '@angular/forms';
 import {I18nModule} from "../shared/i18n/i18n.module";
 import {SmartadminDatatableModule} from "../shared/ui/datatable/smartadmin-datatable.module";
+import {BookService} from "../+service/book.service";
+import {EventService} from "../+service/event.service";
 
 @NgModule({
     imports: [
@@ -12,7 +14,7 @@ import {SmartadminDatatableModule} from "../shared/ui/datatable/smartadmin-datat
     ],
     declarations: [ListBookComponent],
     exports:[ListBookComponent],
-    providers: []
+    providers: [BookService, EventService]
 })
 export class ListBookModule {
 }

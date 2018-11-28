@@ -4,6 +4,8 @@ import {BaseComponent} from "./base.component";
 import {environment} from "../../environments/environment";
 import {AuthService} from "../core/_auth/auth.service";
 import {listType} from "../../environments/constants";
+import {BookService} from "../+service/book.service";
+import {APP_EVENT, EventService} from "../+service/event.service";
 
 declare var $: any;
 
@@ -64,16 +66,16 @@ export class ListBookComponent extends BaseComponent implements OnInit, AfterVie
     delete(id) {
     }
 
-    constructor(private router: Router, private route: ActivatedRoute, private  as: AuthService) {
+    constructor(private router: Router, private route: ActivatedRoute, private  as: AuthService, private bs: BookService, private es: EventService) {
         super();
     }
 
 
-    @ViewChild('repLstDT') repLstDT;
+    @ViewChild('bookLstDT') bookLstDT;
 
     refreshDT() {
         console.log('refresh DT!');
-        const jDataTable = this.repLstDT ? this.repLstDT.jQObject() : null;
+        const jDataTable = this.bookLstDT ? this.bookLstDT.jQObject() : null;
         if (jDataTable) {
             jDataTable.ajax.reload();
         }
@@ -97,6 +99,13 @@ export class ListBookComponent extends BaseComponent implements OnInit, AfterVie
                 }
             }
         ], data);
+
+        if (this.type == listType.MINE) {
+            this.es.ofEvent(APP_EVENT.COPY_BOOK).subscribe(event => {
+                var self = this;
+                self.refreshDT();
+            })
+        }
     }
 
     ngAfterViewInit() {
@@ -104,6 +113,20 @@ export class ListBookComponent extends BaseComponent implements OnInit, AfterVie
     }
 
     private copyBook(id: any) {
-        console.log('copy book, id: ' + id);
+        if (this.confirm("Do you want to copy this book?")) {
+            this.bs.copy(id, this.as.getUserId()).subscribe(response => {
+                    console.log('res: ' + JSON.stringify(response));
+                    var copyResult = response.success;
+                    if (copyResult == true) {
+                        this.successAlert("Copy book success!");
+                        this.es.copyBook({bookId: id});
+                    } else {
+                        this.errorAlert(response.exceptionMessage);
+                    }
+                },
+                error => {
+                    this.errorAlert("Has error!");
+                })
+        }
     }
 }
