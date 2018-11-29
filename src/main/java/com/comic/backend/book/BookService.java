@@ -2,6 +2,7 @@ package com.comic.backend.book;
 
 import com.comic.backend.constant.Status;
 import com.comic.backend.user.UserEntity;
+import com.comic.backend.user.UsersRepository;
 import com.comic.backend.utils.ControllerUtils;
 import com.comic.backend.utils.DataTablePaginationResponse;
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +36,9 @@ public class BookService {
     @Autowired
     private SubTopicRepository subTopicRepository;
 
+    @Autowired
+    private UsersRepository usersRepository;
+
     public DataTablePaginationResponse<BookEntity> getPage(MultiValueMap<String, String> params) {
         SimpleJpaRepository simpleJpaRepository = new SimpleJpaRepository(BookEntity.class, entityManager);
         ControllerUtils controllerUtils = new ControllerUtils<>();
@@ -47,12 +51,14 @@ public class BookService {
 
     @Transactional
     public BookEntity createBook(BookEntity bookEntity) {
-        BookEntity savedBookEntity = bookRepository.save(bookEntity);
-        if (savedBookEntity.getChapterEntityList() != null) {
-            savedBookEntity.getChapterEntityList().forEach(chapterEntity -> {
-                chapterEntity.setBookId(savedBookEntity.getId());
+        if (bookEntity.getId() == null) {
+            bookEntity = bookRepository.save(bookEntity);
+        }
+        Integer bookId = bookEntity.getId();
+        if (bookEntity.getChapterEntityList() != null) {
+            bookEntity.getChapterEntityList().forEach(chapterEntity -> {
+                chapterEntity.setBookId(bookId);
                 ChapterEntity savedChapterEntity = chapterRepository.save(chapterEntity);
-
                 if (savedChapterEntity.getTopicEntityList() != null) {
                     savedChapterEntity.getTopicEntityList().forEach( topicEntity -> {
                         topicEntity.setChapterId(savedChapterEntity.getId());
@@ -68,49 +74,23 @@ public class BookService {
                 }
             });
         }
-        return savedBookEntity;
+        return bookEntity;
     }
 
     @Transactional
     public BookEntity updateBook(BookEntity updateBookEntity) {
         BookEntity bookEntity = bookRepository.findByIdEquals(updateBookEntity.getId());
         if ( bookEntity != null) {
-            deleteFullBook(bookEntity);
-            BookEntity newBookEntity = buildBook(updateBookEntity);
-            return createBook(newBookEntity);
+            deleteDetailOfBook(bookEntity);
+            bookEntity = cloneBook(updateBookEntity, bookEntity);
+            List<ChapterEntity> chapterEntities = buildChaptersFromBook(updateBookEntity);
+            bookEntity.setChapterEntityList(chapterEntities);
+            return createBook(bookEntity);
         }
         return null;
     }
 
-    public BookEntity copyBook(Integer bookId, Integer userId) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(userId);
-
-        BookEntity bookEntity = bookRepository.findByIdEquals(bookId);
-        BookEntity newBook = buildBook(bookEntity);
-        newBook.setUserEntity(userEntity);
-        List<ChapterEntity> chapterEntities = new ArrayList<>();
-        bookEntity.getChapterEntityList().forEach(chapterEntity -> {
-            ChapterEntity newChapter = buildChapter(chapterEntity);
-            List<TopicEntity> topicEntities = new ArrayList<>();
-            chapterEntity.getTopicEntityList().forEach(topicEntity -> {
-                TopicEntity newTopicEntity = buildTopic(topicEntity);
-                List<SubTopicEntity> subTopicEntities = new ArrayList<>();
-                topicEntity.getSubTopicEntityList().forEach(subTopicEntity -> {
-                    SubTopicEntity newSubTopicEntity = buildSubTopic(subTopicEntity);
-                    subTopicEntities.add(newSubTopicEntity);
-                });
-                newTopicEntity.setSubTopicEntityList(subTopicEntities);
-                topicEntities.add(newTopicEntity);
-            });
-            newChapter.setTopicEntityList(topicEntities);
-            chapterEntities.add(newChapter);
-        });
-        newBook.setChapterEntityList(chapterEntities);
-        return createBook(newBook);
-    }
-
-    private void deleteFullBook(BookEntity bookEntity) {
+    private void deleteDetailOfBook(BookEntity bookEntity) {
         bookEntity.getChapterEntityList().forEach(chapterEntity -> {
             chapterEntity.getTopicEntityList().forEach(topicEntity -> {
                 topicEntity.getSubTopicEntityList().forEach(subTopicEntity -> {
@@ -120,20 +100,63 @@ public class BookService {
             });
             chapterRepository.delete(chapterEntity);
         });
-        bookRepository.delete(bookEntity);
     }
 
-    private BookEntity buildBook(BookEntity oldBookEntity) {
+    private List<ChapterEntity> buildChaptersFromBook(BookEntity bookEntity) {
+        List<ChapterEntity> chapterEntities = new ArrayList<>();
+        if (bookEntity.getChapterEntityList() != null) {
+            bookEntity.getChapterEntityList().forEach(chapterEntity -> {
+                ChapterEntity newChapter = buildChapter(chapterEntity);
+                List<TopicEntity> topicEntities = new ArrayList<>();
+                if (chapterEntity.getTopicEntityList() != null) {
+                    chapterEntity.getTopicEntityList().forEach(topicEntity -> {
+                        TopicEntity newTopicEntity = buildTopic(topicEntity);
+                        List<SubTopicEntity> subTopicEntities = new ArrayList<>();
+                        if (topicEntity.getSubTopicEntityList() != null) {
+                            topicEntity.getSubTopicEntityList().forEach(subTopicEntity -> {
+                                SubTopicEntity newSubTopicEntity = buildSubTopic(subTopicEntity);
+                                subTopicEntities.add(newSubTopicEntity);
+                            });
+                        }
+                        newTopicEntity.setSubTopicEntityList(subTopicEntities);
+                        topicEntities.add(newTopicEntity);
+                    });
+                }
+                newChapter.setTopicEntityList(topicEntities);
+                chapterEntities.add(newChapter);
+            });
+        }
+        return chapterEntities;
+    }
+
+    public BookEntity copyBook(Integer bookId, Integer userId) {
+        UserEntity userEntity = usersRepository.findByIdEquals(userId);
+        if (userEntity != null) {
+            userEntity.setId(userId);
+            BookEntity bookEntity = bookRepository.findByIdEquals(bookId);
+            BookEntity newBook = buildNewBook(bookEntity);
+            newBook.setUserEntity(userEntity);
+            newBook.setChapterEntityList(buildChaptersFromBook(bookEntity));
+            return createBook(newBook);
+        }
+        return null;
+    }
+
+    private BookEntity buildNewBook(BookEntity oldBookEntity) {
         BookEntity newBookEntity = new BookEntity();
-        newBookEntity.setUserEntity(oldBookEntity.getUserEntity());
-        newBookEntity.setFbId(oldBookEntity.getFbId());
-        newBookEntity.setFbShareCount(oldBookEntity.getFbShareCount());
-        newBookEntity.setFbShareUrl(oldBookEntity.getFbShareUrl());
-        newBookEntity.setName(oldBookEntity.getName());
-        newBookEntity.setPermission(oldBookEntity.getPermission());
-        newBookEntity.setStatus(oldBookEntity.getStatus());
-        newBookEntity.setChapterEntityList(oldBookEntity.getChapterEntityList());
+        cloneBook(oldBookEntity, newBookEntity);
         return newBookEntity;
+    }
+
+    private BookEntity cloneBook(BookEntity sourceBook, BookEntity cloneBook) {
+        cloneBook.setUserEntity(sourceBook.getUserEntity());
+        cloneBook.setFbId(sourceBook.getFbId());
+        cloneBook.setFbShareCount(sourceBook.getFbShareCount());
+        cloneBook.setFbShareUrl(sourceBook.getFbShareUrl());
+        cloneBook.setName(sourceBook.getName());
+//        cloneBook.setPermission(sourceBook.getPermission());
+        cloneBook.setStatus(sourceBook.getStatus());
+        return cloneBook;
     }
 
     private ChapterEntity buildChapter(ChapterEntity chapterEntity) {
