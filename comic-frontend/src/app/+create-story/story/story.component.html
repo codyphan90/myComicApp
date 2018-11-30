@@ -5,6 +5,7 @@
                   (nodeRemoved)="handleRemoved($event)"
                   (nodeRenamed)="handleRenamed($event)"
                   (nodeSelected)="handleSelected($event)"
+                  (nodeUnselected)="onNodeUnselected($event)"
                   (nodeMoved)="handleMoved($event)"
                   (nodeCreated)="handleCreated($event)"
                   (nodeExpanded)="handleExpanded($event)"
@@ -22,8 +23,8 @@
             </button>
         </div>
         <div class="col">
-            <div>
-                <fabric-component *ngIf="showFabric" #fabric ></fabric-component>
+            <div [style.display]="(showFabric) ? '' : 'none'">
+                <fabric-component #fabric ></fabric-component>
             </div>
 
             <div>

@@ -4,6 +4,6 @@ export const listType: any = {
     TRENDING: {code: "TRENDING", des: "Trending books"}
 };
 
-export const treeNodeType: any = {
+export const treeNodeLevel: any = {
     BOOK: 1, CHAPTER: 2, TOPIC: 3, SUB_TOPIC: 4
 };

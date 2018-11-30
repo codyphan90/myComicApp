@@ -561,13 +561,13 @@ export class AppComponent {
 
   loadCanvasFromJSON() {
     let CANVAS = localStorage.getItem('Kanvas');
-    console.log('CANVAS');
-    console.log(CANVAS);
+    // console.log('CANVAS');
+    // console.log(CANVAS);
 
     // and load everything from the same json
     this.canvas.loadFromJSON(CANVAS, () => {
-      console.log('CANVAS untar');
-      console.log(CANVAS);
+      // console.log('CANVAS untar');
+      // console.log(CANVAS);
 
       // making sure to render canvas at the end
       this.canvas.renderAll();

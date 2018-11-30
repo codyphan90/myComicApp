@@ -67,4 +67,8 @@ export class BaseComponent {
         _options.columns = columns;
         return _options;
     }
+
+    getJsonFromCanvas(canvas) {
+        return JSON.stringify(canvas, null, 2)
+    }
 }

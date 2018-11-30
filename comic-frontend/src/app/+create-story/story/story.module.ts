@@ -6,7 +6,7 @@ import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {FacebookModule} from "ngx-facebook";
 import { TreeModule } from 'ng2-tree';
-import {AppModule} from "../../../fabric/app.module";
+import {AppModule} from "../../../+fabric/app.module";
 
 
 @NgModule({
