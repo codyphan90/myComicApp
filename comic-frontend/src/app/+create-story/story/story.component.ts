@@ -255,6 +255,9 @@ export class StoryComponent extends BaseComponent implements OnInit {
     }
 
     saveOrUpdateBook() {
+        console.log('node before: ' + this.prevNode.id);
+        this.subTopicContent[this.prevNode.id]  = this.getJsonFromCanvas(this.fabricComponent.canvas);
+        
         let bookEntity: any = this.buildBookEntityFromModel(this.bookTree.getController().toTreeModel());
         console.log('save book: ' + JSON.stringify(bookEntity));
 
