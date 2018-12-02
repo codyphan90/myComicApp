@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {FadeInTop} from '../../shared/animations/fade-in-top.decorator';
 import {BaseComponent} from "../../base/base.component";
-import {FacebookService, InitParams} from "ngx-facebook";
+import {FacebookService, InitParams} from "../../../../node_modules/ngx-facebook";
 import {NodeEvent, Tree, TreeModel} from 'ng2-tree';
 import {ActivatedRoute} from "@angular/router";
 import {BookService} from "../../+service/book.service";
