@@ -1,5 +1,5 @@
 <div class="well" sa-widget color="blueDark">
-    <h2 style="text-align: center">{{title}}</h2>
+    <h2 style="text-align: center; height: 40px;">{{title}}</h2>
     <div>
         <div class="widget-body no-padding">
             <sa-datatable #bookLstDT (buttonClicked)="onActionButtonClicked($event)" (rowDoubleClicked)="onActionDoubleClicked($event)" [options]="options" filter="true" tableClass="table table-striped table-bordered table-hover">

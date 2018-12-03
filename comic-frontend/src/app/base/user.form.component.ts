@@ -31,6 +31,7 @@ export class UserFormComponent extends BaseComponent implements OnInit {
                 private modalService: BsModalService, private  ugs: UserGroupService, private as: AuthService, private fb: FacebookService) {
         super();
     }
+    changePass: boolean = false;
 
     @Input() type: any;
     user: User = {
@@ -144,6 +145,19 @@ export class UserFormComponent extends BaseComponent implements OnInit {
         return (this.type == this.compType.SAVE);
     }
 
+    doChangePass()  {
+        // $(".ChangePassWordDiv").css("visibility", "visible");
+        console.log("show change pass")
+        // document.getElementById('ChangePassWordDiv').style.display='inline';
+        var x = document.getElementById("ChangePassWordDiv");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+
+    }
+
     verifyEmail() {
         if (this.confirm(`Do you want to send verify link to email ${this.user.userName}`)) {
             this.us.verifyEmail(this.user.userName).subscribe(response => {
@@ -211,10 +225,8 @@ export class UserFormComponent extends BaseComponent implements OnInit {
 
     getListFriendFacebook() {
         this.fb.api('/' + this.user.facebookId + '/friends',).then((res: any) => {
-            console.log('@@@Got the users list friend ', JSON.stringify(res));
             var listFriendFacebookId = res.data.map(user => user.id);
             this.as.facebookFriendList = listFriendFacebookId;
-            console.log('@@@list user id ', listFriendFacebookId);
         }).catch((error: any) => this.errorAlert(error.message));
 
     }

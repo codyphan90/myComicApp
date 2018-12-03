@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import 'fabric';
+import {FacebookService, InitParams} from "ngx-facebook";
 declare const fabric: any;
 
 @Component({
@@ -42,9 +43,11 @@ export class AppComponent {
   private figureEditor: boolean = false;
   private selected: any;
 
-  constructor() { }
+  constructor(private fb: FacebookService) { }
 
   ngOnInit() {
+    //facebook
+      this.initFB();
 
     //setup front side canvas
     this.canvas = new fabric.Canvas('canvas', {
@@ -588,5 +591,15 @@ export class AppComponent {
     this.imageEditor = false;
     this.figureEditor = false;
   }
+
+    initFB() {
+        let initParams: InitParams = {
+            appId: '163456804604097',
+            cookie: true,
+            xfbml: true,
+            version: 'v2.9',
+        };
+        this.fb.init(initParams);
+    }
 
 }

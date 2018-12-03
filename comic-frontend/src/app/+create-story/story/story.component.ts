@@ -119,7 +119,7 @@ export class StoryComponent extends BaseComponent implements OnInit {
         } else {
             this.type = this.compType.SAVE;
             let treeModel: any = {};
-            treeModel.value = '...';
+            treeModel.value = 'Insert title here';
             treeModel.type = treeNodeLevel.BOOK;
             let bookChildren: BookNode[] = [];
             treeModel.children = bookChildren;
