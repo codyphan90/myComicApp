@@ -77,6 +77,35 @@ public class BookService {
         return bookEntity;
     }
 
+    public BookEntity updateBook3(BookEntity updateBookEntity) {
+        BookEntity bookFromDB = bookRepository.findByIdEquals(updateBookEntity.getId());
+        if (bookFromDB != null) {
+            bookFromDB = updateBookEntity;
+            bookRepository.save(bookFromDB);
+            if (bookFromDB.getChapterEntityList() != null) {
+                bookFromDB.getChapterEntityList().forEach(chapterEntity -> {
+                    ChapterEntity updateChapterEntity = chapterRepository.save(chapterEntity);
+                    if (updateChapterEntity.getTopicEntityList() != null) {
+                        updateChapterEntity.getTopicEntityList().forEach( topicEntity -> {
+                            topicEntity.setChapterId(updateChapterEntity.getId());
+                            TopicEntity updateTopicEntity = topicRepository.save(topicEntity);
+
+                            if (updateTopicEntity.getSubTopicEntityList() != null) {
+                                updateTopicEntity.getSubTopicEntityList().forEach(subTopicEntity -> {
+                                    subTopicEntity.setTopicId(updateTopicEntity.getId());
+                                    subTopicRepository.save(subTopicEntity);
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+            return bookFromDB;
+        }
+
+        return null;
+    }
+
     @Transactional
     public BookEntity updateBook(BookEntity updateBookEntity) {
         BookEntity bookFromDB = bookRepository.findByIdEquals(updateBookEntity.getId());
@@ -118,8 +147,8 @@ public class BookService {
             });
 
 //            deleteDetailOfBook(bookEntity);
-            bookFromDB = cloneBook(updateBookEntity, bookFromDB);
-            rebuildBook(updateBookEntity, bookFromDB);
+//            bookFromDB = cloneBook(updateBookEntity, bookFromDB);
+            updateBook3(updateBookEntity);
             return bookFromDB;
 //            bookEntity.setChapterEntityList(chapterEntities);
         }
