@@ -45,7 +45,7 @@ export class StoryComponent extends BaseComponent implements OnInit {
         treeModel.value = this.book.name;
         let bookChildren: BookNode[] = [];
         treeModel.children = bookChildren;
-        treeModel.icon = "fa fa-book";
+        treeModel.icon = "";
         treeModel.type = treeNodeLevel.BOOK;
         treeModel.id = this.genNodeId();
         for (let chapter of this.book.chapterEntityList) {
@@ -54,7 +54,7 @@ export class StoryComponent extends BaseComponent implements OnInit {
             let chapterNode: BookNode = {
                 value: chapter.name,
                 children: [],
-                icon: '',
+                icon: 'fa-file-text-o',
                 id: ''
             };
             chapterNode.id = this.genNodeId();
@@ -66,7 +66,7 @@ export class StoryComponent extends BaseComponent implements OnInit {
                 let topicNode: BookNode = {
                     value: topic.name,
                     children: [],
-                    icon: "fa fa-pencil",
+                    icon: "fa-file-text",
                     id: ''
                 };
                 topicNode.children = topicChildren;
@@ -77,7 +77,7 @@ export class StoryComponent extends BaseComponent implements OnInit {
                     let subTopicNode = {
                         value: subTopic.name,
                         children: [],
-                        icon: "fa fa-pencil",
+                        icon: "fa-pencil",
                         id: this.genNodeId(),
                         content: subTopic.content
                     };
@@ -103,7 +103,6 @@ export class StoryComponent extends BaseComponent implements OnInit {
         if (this.id) {
             this.type = this.compType.UPDATE;
             this.bs.getBookById(this.id).subscribe(response => {
-                    console.log('res: ' + JSON.stringify(response));
                     let getResult = response.success;
                     if (getResult == true) {
                         this.book = response.dataResponse;

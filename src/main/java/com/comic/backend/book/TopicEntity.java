@@ -59,7 +59,7 @@ public class TopicEntity {
         this.subTopicEntityList = subTopicEntityList;
     }
 
-    @OneToMany(mappedBy = "topicId")
+    @OneToMany(mappedBy = "topicId", orphanRemoval = true)
     public List<SubTopicEntity> getSubTopicEntityList() {
         return subTopicEntityList;
     }

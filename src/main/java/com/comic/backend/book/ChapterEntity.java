@@ -58,7 +58,7 @@ public class ChapterEntity {
         this.topicEntityList = topicEntityList;
     }
 
-    @OneToMany(mappedBy = "chapterId")
+    @OneToMany(mappedBy = "chapterId",  orphanRemoval = true)
     public List<TopicEntity> getTopicEntityList() {
         return topicEntityList;
     }

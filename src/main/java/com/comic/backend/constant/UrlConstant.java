@@ -20,6 +20,7 @@ public class UrlConstant {
     public static final String COPY_BOOK = "/{book_id}/copy/{user_id}";
 
     public static final String SOFT_DELETE_BOOK_URL = "/soft-delete/{book_id}";
+    public static final String DELETE_CHAPTER_URL = "/chapter/{chapter_id}";
 
 
 }

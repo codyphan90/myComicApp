@@ -82,6 +82,19 @@ public class BookController {
         }
     }
 
+    @RequestMapping(value = UrlConstant.DELETE_CHAPTER_URL, method = RequestMethod.PUT)
+    public @ResponseBody
+    ResponseEntity deleteChapter(@PathVariable("chapter_id") Integer chapterId ) {
+        logger.info("========== Start delete chapter ==========");
+        try {
+            bookService.deleteChapter(chapterId);
+            return new ResponseEntity<>("Delete Chapter Successfully");
+        } catch (Exception e) {
+            logger.error(SYSTEM_ERROR_MESSAGE, e);
+            return new ResponseEntity<>(false, e.getMessage());
+        }
+    }
+
     @RequestMapping(method = RequestMethod.PUT)
     public @ResponseBody
     ResponseEntity updateBook(@RequestBody BookRequest bookRequest ) {
@@ -117,4 +130,6 @@ public class BookController {
             return new ResponseEntity<>(false, e.getMessage());
         }
     }
+
+
 }

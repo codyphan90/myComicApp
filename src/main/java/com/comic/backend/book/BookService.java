@@ -79,15 +79,150 @@ public class BookService {
 
     @Transactional
     public BookEntity updateBook(BookEntity updateBookEntity) {
+        BookEntity bookFromDB = bookRepository.findByIdEquals(updateBookEntity.getId());
+        if (bookFromDB != null) {
+
+            List<Integer> listChapterIdFromRequest = getListChapterId(updateBookEntity);
+            List<Integer> listChapterIdFromDB = getListChapterId(bookFromDB);
+            //remove redundant chapters and children
+            listChapterIdFromDB.forEach(id -> {
+                if (!listChapterIdFromRequest.contains(id)) {
+                    ChapterEntity removeChapter = chapterRepository.findByIdEquals(id);
+                    chapterRepository.delete(removeChapter);
+                }
+            });
+
+            updateBookEntity.getChapterEntityList().forEach(chapterEntity -> {
+                ChapterEntity chapterEntityDB = chapterRepository.findByIdEquals(chapterEntity.getId());
+                if (chapterEntityDB != null) {
+                    List<Integer> listTopicIdDB = getListTopicId(chapterEntityDB);
+                    List<Integer> listTopicIdRequest = getListTopicId(chapterEntity);
+                    listTopicIdDB.forEach(id -> {
+                        if (!listTopicIdRequest.contains(id)) {
+                            TopicEntity removeTopic = topicRepository.findByIdEquals(id);
+                            topicRepository.delete(removeTopic);
+                        }
+                    });
+                }
+            });
+
+            List<Integer> subSubTopicIdFromRequest = getListSubTopicId(updateBookEntity);
+            List<Integer> subTopicIdFromDB = getListSubTopicId(bookFromDB);
+            subTopicIdFromDB.forEach(id -> {
+                if (!subSubTopicIdFromRequest.contains(id)) {
+                    SubTopicEntity deleteSubTopic = subTopicRepository.findByIdEquals(id);
+                    if (deleteSubTopic != null) {
+                        subTopicRepository.delete(deleteSubTopic);
+                    }
+                }
+            });
+
+//            deleteDetailOfBook(bookEntity);
+            bookFromDB = cloneBook(updateBookEntity, bookFromDB);
+            rebuildBook(updateBookEntity, bookFromDB);
+            return bookFromDB;
+//            bookEntity.setChapterEntityList(chapterEntities);
+        }
+        return null;
+    }
+
+    private void rebuildBook(BookEntity bookFromRequest, BookEntity bookFromDB) {
+        bookFromRequest.getChapterEntityList().forEach(chapterFromRequest -> {
+            if (chapterFromRequest.getId() != null) {
+                bookFromDB.getChapterEntityList().forEach(chapterFromDB -> {
+                    if (chapterFromDB.getId().equals(chapterFromRequest.getId())) {
+                        chapterFromDB.setName(chapterFromRequest.getName());
+//                        chapterRepository.save(chapterFromDB);
+                    }
+                    Integer chapterId = chapterFromRequest.getId();
+                    chapterFromRequest.getTopicEntityList().forEach(topicFromRequest -> {
+                        if (topicFromRequest.getId() != null) {
+                            chapterFromDB.getTopicEntityList().forEach(topicFromDB -> {
+                                if (topicFromDB.getId().equals(topicFromRequest.getId())) {
+                                    topicFromDB.setName(topicFromRequest.getName());
+//                                    topicRepository.save(topicFromDB);
+                                }
+                                Integer topicId = topicFromRequest.getId();
+                                topicFromRequest.getSubTopicEntityList().forEach(subTopicFromRequest -> {
+                                    if (subTopicFromRequest.getId() != null) {
+                                        topicFromDB.getSubTopicEntityList().forEach(subTopicFromDB -> {
+                                            if (subTopicFromDB.getId().equals(subTopicFromRequest.getId())) {
+                                                subTopicFromDB.setName(subTopicFromRequest.getName());
+                                                subTopicFromDB.setContent(subTopicFromRequest.getContent());
+//                                               subTopicRepository.save(subTopicFromDB);
+                                            }
+                                        });
+                                    } else {
+                                        SubTopicEntity subTopicEntity = new SubTopicEntity();
+                                        subTopicEntity.setTopicId(topicId);
+                                        subTopicEntity.setName(subTopicFromRequest.getName());
+                                        subTopicEntity.setContent(subTopicFromRequest.getContent());
+                                        subTopicRepository.save(subTopicEntity);
+                                        topicFromDB.getSubTopicEntityList().add(subTopicEntity);
+                                    }
+                                });
+                            });
+
+                        } else {
+                            TopicEntity topicEntity = new TopicEntity();
+                            topicEntity.setChapterId(chapterId);
+                            topicEntity.setName(topicFromRequest.getName());
+                            topicRepository.save(topicEntity);
+                            chapterFromDB.getTopicEntityList().add(topicEntity);
+                        }
+                    });
+                });
+            } else {
+                ChapterEntity chapterEntity = new ChapterEntity();
+                chapterEntity.setBookId(bookFromRequest.getId());
+                chapterEntity.setName(chapterFromRequest.getName());
+                chapterRepository.save(chapterEntity);
+                bookFromDB.getChapterEntityList().add(chapterEntity);
+            }
+        });
+    }
+
+    @Transactional
+    public BookEntity updateBook2(BookEntity updateBookEntity) {
         BookEntity bookEntity = bookRepository.findByIdEquals(updateBookEntity.getId());
         if ( bookEntity != null) {
-            deleteDetailOfBook(bookEntity);
-            bookEntity = cloneBook(updateBookEntity, bookEntity);
-            List<ChapterEntity> chapterEntities = buildChaptersFromBook(updateBookEntity);
-            bookEntity.setChapterEntityList(chapterEntities);
+            bookEntity.getChapterEntityList().forEach(chapterEntity -> {
+                chapterRepository.delete(chapterEntity);
+            });
+            bookRepository.save(bookEntity);
+
+            bookEntity.setChapterEntityList(updateBookEntity.getChapterEntityList());
             return createBook(bookEntity);
         }
         return null;
+    }
+
+    private List<Integer> getListSubTopicId(BookEntity bookEntity) {
+        List<Integer> listSubTopicId = new ArrayList<>();
+        bookEntity.getChapterEntityList().forEach(chapterEntity -> {
+            chapterEntity.getTopicEntityList().forEach(topicEntity -> {
+                topicEntity.getSubTopicEntityList().forEach(subTopicEntity -> {
+                    listSubTopicId.add(subTopicEntity.getId());
+                });
+            });
+        });
+        return listSubTopicId;
+    }
+
+    private List<Integer> getListChapterId(BookEntity bookEntity) {
+        List<Integer> listChapterId = new ArrayList<>();
+        bookEntity.getChapterEntityList().forEach(chapterEntity -> {
+            listChapterId.add(chapterEntity.getId());
+        });
+        return listChapterId;
+    }
+
+    private List<Integer> getListTopicId(ChapterEntity chapterEntity) {
+        List<Integer> listTopicId = new ArrayList<>();
+        chapterEntity.getTopicEntityList().forEach(topicEntity -> {
+            listTopicId.add(topicEntity.getId());
+        });
+        return listTopicId;
     }
 
     private void deleteDetailOfBook(BookEntity bookEntity) {
@@ -185,5 +320,11 @@ public class BookService {
     public void softDeleteBook(BookEntity bookEntity) {
         bookEntity.setStatus(Status.IS_DELETED.getValue());
         bookRepository.save(bookEntity);
+    }
+
+    @Transactional
+    public void deleteChapter(Integer id) {
+        ChapterEntity chapterEntity = chapterRepository.findByIdEquals(id);
+        chapterRepository.delete(chapterEntity);
     }
 }
