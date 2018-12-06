@@ -3,5 +3,5 @@ export class BookNode {
     children: any[] = [];
     icon: any;
     id: any;
-    nodeId: any;
+    dbId: any;
 }

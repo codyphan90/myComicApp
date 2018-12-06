@@ -13,6 +13,11 @@ export const routes: Routes = [
         path: 'story/:id',
         loadChildren: './story/story.module#StoryModule',
         data: {pageTitle: 'Book detail'}
+    },
+    {
+        path: 'story/:id/:stId',
+        loadChildren: './story/story.module#StoryModule',
+        data: {pageTitle: 'Book detail'}
     }
 
 ];
