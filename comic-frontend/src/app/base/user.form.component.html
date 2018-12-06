@@ -19,6 +19,24 @@
                     <b *ngIf="!user.isActive" class="tooltip tooltip-bottom-right">Needed to verify your account</b>
                 </label>
             </section>
+            <section *ngIf="isSave()">
+                <section>
+                    <label>Password: </label>
+                    <label class="input"> <i class="icon-append fa fa-lock"></i>
+                        <input [(ngModel)]="user.password" type="password" name="password" placeholder="Password"
+                               id="password">
+                        <b class="tooltip tooltip-bottom-right">Don't forget your password</b> </label>
+                </section>
+
+                <section>
+                    <label>Confirm Password: </label>
+                    <label class="input"> <i class="icon-append fa fa-lock"></i>
+                        <input [(ngModel)]="user.passwordConfirm" type="password" name="passwordConfirm"
+                               placeholder="Confirm password">
+                        <b class="tooltip tooltip-bottom-right">Don't forget your password</b> </label>
+                </section>
+
+            </section>
 
             <button *ngIf="!isSave()" (click)="doChangePass()" class="btn btn-primary" style=" width:120px; height: 30px; color: black; background: white">
                 Change Password <i class="fa fa-lock"></i>
