@@ -7,7 +7,7 @@ var LOGIN_ROUTE = '/auth/login';
 export const environment = {
     production: false,
     debug: true,
-    home_url: HOME_URL,
+    fb_sub_topic_url: HOME_URL + '/sub-topic/',
     authen: {
         login_url: HOME_URL + '/#' + LOGIN_ROUTE,
         logout_url: HOME_URL + '/#' + LOGIN_ROUTE,

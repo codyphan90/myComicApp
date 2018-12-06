@@ -21,7 +21,7 @@ export class StoryComponent extends BaseComponent implements OnInit {
     type: any;
     book: any;
     prevNode: Tree;
-    nodeIdIndex: number = 1;
+    nodeIdIndex: number = 0;
     subTopicLink: any;
 
     @ViewChild('fabric') fabricComponent: AppComponent;
@@ -33,6 +33,7 @@ export class StoryComponent extends BaseComponent implements OnInit {
     public tree: TreeModel;
     @ViewChild('bookTree') bookTree;
     showFabric: boolean = false;
+    showFbComponent: boolean = false;
 
     increaseNodeIdIndex() {
         this.nodeIdIndex = this.nodeIdIndex + 1;
@@ -58,8 +59,8 @@ export class StoryComponent extends BaseComponent implements OnInit {
                 value: chapter.name,
                 children: [],
                 icon: 'fa-file-text-o',
-                id: this.genNodeId() ,
-                dbId:chapter.id
+                id: this.genNodeId(),
+                dbId: chapter.id
             };
             chapterNode.children = chapterChildren;
             bookChildren.push(chapterNode);
@@ -70,7 +71,7 @@ export class StoryComponent extends BaseComponent implements OnInit {
                     children: [],
                     icon: "fa-file-text",
                     dbId: topic.id,
-                    id:this.genNodeId()
+                    id: this.genNodeId()
                 };
                 topicNode.children = topicChildren;
                 chapterChildren.push(topicNode);
@@ -102,7 +103,7 @@ export class StoryComponent extends BaseComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.initFB();
+        // this.initFB();
         this.id = this.route.snapshot.paramMap.get('id');
         if (this.id) {
             this.type = this.compType.UPDATE;
@@ -198,8 +199,15 @@ export class StoryComponent extends BaseComponent implements OnInit {
         let nodeLevel = this.getLevelOfNode(e.node);
         console.log('node level: ' + nodeLevel);
         if (nodeLevel == treeNodeLevel.SUB_TOPIC) {
-            this.subTopicLink = environment.home_url + '/#/create-story/story/' + this.id + '/subTopic/' + e.node.toTreeModel().dbId;
-            console.log('facebook href: ' + this.subTopicLink);
+            if (e.node.toTreeModel().dbId) {
+                this.subTopicLink = environment.fb_sub_topic_url + e.node.toTreeModel().dbId;
+                console.log('facebook href: ' + this.subTopicLink);
+                this.initFB();
+                this.showFbComponent = true;
+            } else {
+                this.showFbComponent = false;
+            }
+
             this.showFabric = true;
             let content = this.subTopicContent[e.node.id];
             if (!content) {
@@ -213,6 +221,7 @@ export class StoryComponent extends BaseComponent implements OnInit {
             }
         } else if (this.showFabric) {
             this.showFabric = false;
+            this.showFbComponent = false;
         }
     }
 
@@ -257,40 +266,46 @@ export class StoryComponent extends BaseComponent implements OnInit {
     }
 
     saveOrUpdateBook() {
-        console.log('node before: ' + this.prevNode.id);
-        this.subTopicContent[this.prevNode.id]  = this.getJsonFromCanvas(this.fabricComponent.canvas);
-        
-        let bookEntity: any = this.buildBookEntityFromModel(this.bookTree.getController().toTreeModel());
-        console.log('save book: ' + JSON.stringify(bookEntity));
+        if (this.confirm("Do you want to save book?")) {
+            if (this.prevNode) {
+                let prevNodeLevel = this.getLevelOfNode(this.prevNode);
+                console.log('id node before save: ' + this.prevNode.id);
+                if (prevNodeLevel == treeNodeLevel.SUB_TOPIC) {
+                    this.subTopicContent[this.prevNode.id] = this.getJsonFromCanvas(this.fabricComponent.canvas);
+                }
+            }
 
-        if (this.type == this.compType.UPDATE) {
-            this.bs.update(bookEntity).subscribe(response => {
-                    console.log('res: ' + JSON.stringify(response));
-                    let updateResult = response.success;
-                    if (updateResult == true) {
-                        this.successAlert("Update book success!");
-                    } else {
-                        this.errorAlert(response.exceptionMessage);
-                    }
-                },
-                error => {
-                    this.errorAlert("Has error!");
-                })
-        } else {
-            this.bs.save(bookEntity).subscribe(response => {
-                    console.log('res: ' + JSON.stringify(response));
-                    let createResult = response.success;
-                    if (createResult == true) {
-                        this.successAlert("Create book success!");
-                    } else {
-                        this.errorAlert(response.exceptionMessage);
-                    }
-                },
-                error => {
-                    this.errorAlert("Has error!");
-                })
+            let bookEntity: any = this.buildBookEntityFromModel(this.bookTree.getController().toTreeModel());
+            console.log('save book: ' + JSON.stringify(bookEntity));
+
+            if (this.type == this.compType.UPDATE) {
+                this.bs.update(bookEntity).subscribe(response => {
+                        console.log('res: ' + JSON.stringify(response));
+                        let updateResult = response.success;
+                        if (updateResult == true) {
+                            this.successAlert("Update book success!");
+                        } else {
+                            this.errorAlert(response.exceptionMessage);
+                        }
+                    },
+                    error => {
+                        this.errorAlert("Has error!");
+                    })
+            } else {
+                this.bs.save(bookEntity).subscribe(response => {
+                        console.log('res: ' + JSON.stringify(response));
+                        let createResult = response.success;
+                        if (createResult == true) {
+                            this.successAlert("Create book success!");
+                        } else {
+                            this.errorAlert(response.exceptionMessage);
+                        }
+                    },
+                    error => {
+                        this.errorAlert("Has error!");
+                    })
+            }
         }
     }
-
 
 }

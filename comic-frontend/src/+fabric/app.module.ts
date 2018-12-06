@@ -5,7 +5,6 @@ import { ColorPickerModule } from 'ngx-color-picker';
 
 import { AppComponent } from './app.component';
 import {CommonModule} from "@angular/common";
-import {FacebookModule} from "ngx-facebook";
 
 @NgModule({
   declarations: [
@@ -14,7 +13,7 @@ import {FacebookModule} from "ngx-facebook";
   imports: [
     CommonModule,
     FormsModule,
-    ColorPickerModule, FacebookModule.forRoot()
+    ColorPickerModule
   ],
   exports :[AppComponent],
   providers: [],
