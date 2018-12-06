@@ -136,4 +136,19 @@ public class BookEntity {
     public void setStatus(Integer status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "BookEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", permission=" + permission +
+                ", fbShareUrl='" + fbShareUrl + '\'' +
+                ", fbShareCount=" + fbShareCount +
+                ", fbId='" + fbId + '\'' +
+                ", userEntity=" + userEntity +
+                ", chapterEntityList=" + chapterEntityList +
+                ", status=" + status +
+                '}';
+    }
 }

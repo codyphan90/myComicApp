@@ -87,4 +87,15 @@ public class TopicEntity {
         result = 31 * result + (description != null ? description.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "TopicEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", chapterId=" + chapterId +
+                ", description='" + description + '\'' +
+                ", subTopicEntityList=" + subTopicEntityList +
+                '}';
+    }
 }

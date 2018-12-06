@@ -88,4 +88,15 @@ public class SubTopicEntity {
         result = 31 * result + (description != null ? description.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "SubTopicEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", topicId=" + topicId +
+                ", content='" + content + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

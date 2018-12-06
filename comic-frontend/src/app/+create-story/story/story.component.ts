@@ -9,6 +9,7 @@ import {BookNode} from "../../bo/book.node";
 import {AuthService} from "../../core/_auth/auth.service";
 import {treeNodeLevel} from "../../../environments/constants";
 import {AppComponent} from "../../../+fabric/app.component";
+import {environment} from "../../../environments/environment";
 
 @Component({
     selector: 'story',
@@ -21,6 +22,7 @@ export class StoryComponent extends BaseComponent implements OnInit {
     book: any;
     prevNode: Tree;
     nodeIdIndex: number = 1;
+    subTopicLink = environment.home_url + '/';
 
     @ViewChild('fabric') fabricComponent: AppComponent;
 
@@ -45,7 +47,7 @@ export class StoryComponent extends BaseComponent implements OnInit {
         treeModel.value = this.book.name;
         let bookChildren: BookNode[] = [];
         treeModel.children = bookChildren;
-        treeModel.icon = "";
+        treeModel.icon = "fa fa-book";
         treeModel.type = treeNodeLevel.BOOK;
         treeModel.id = this.genNodeId();
         for (let chapter of this.book.chapterEntityList) {
@@ -55,7 +57,8 @@ export class StoryComponent extends BaseComponent implements OnInit {
                 value: chapter.name,
                 children: [],
                 icon: 'fa-file-text-o',
-                id: ''
+                id: chapter.id,
+                nodeId:''
             };
             chapterNode.id = this.genNodeId();
             chapterNode.children = chapterChildren;
@@ -67,10 +70,11 @@ export class StoryComponent extends BaseComponent implements OnInit {
                     value: topic.name,
                     children: [],
                     icon: "fa-file-text",
-                    id: ''
+                    id: topic.id,
+                    nodeId:''
                 };
                 topicNode.children = topicChildren;
-                topicNode.id = this.genNodeId();
+                topicNode.nodeId = this.genNodeId();
                 chapterChildren.push(topicNode);
                 for (let subTopic of topic.subTopicEntityList) {
                     this.increaseNodeIdIndex();
@@ -78,7 +82,8 @@ export class StoryComponent extends BaseComponent implements OnInit {
                         value: subTopic.name,
                         children: [],
                         icon: "fa-pencil",
-                        id: this.genNodeId(),
+                        id: subTopic.id,
+                        nodeId: this.genNodeId(),
                         content: subTopic.content
                     };
                     topicChildren.push(subTopicNode);
@@ -103,6 +108,7 @@ export class StoryComponent extends BaseComponent implements OnInit {
         if (this.id) {
             this.type = this.compType.UPDATE;
             this.bs.getBookById(this.id).subscribe(response => {
+                    console.log('res: ' + JSON.stringify(response));
                     let getResult = response.success;
                     if (getResult == true) {
                         this.book = response.dataResponse;
@@ -185,15 +191,16 @@ export class StoryComponent extends BaseComponent implements OnInit {
     handleSelected(e: NodeEvent) {
         if (this.prevNode) {
             let prevNodeLevel = this.getLevelOfNode(this.prevNode);
-            console.log('prev node id 222: ' + this.prevNode.id);
+            console.log('prev node id 222: ' + this.prevNode.toTreeModel().nodeId);
             if (prevNodeLevel == treeNodeLevel.SUB_TOPIC) {
-                this.subTopicContent[this.prevNode.id] = this.getJsonFromCanvas(this.fabricComponent.canvas);
+                this.subTopicContent[this.prevNode.toTreeModel().nodeId] = this.getJsonFromCanvas(this.fabricComponent.canvas);
             }
         }
         this.prevNode = e.node;
         let nodeLevel = this.getLevelOfNode(e.node);
         console.log('node level: ' + nodeLevel);
         if (nodeLevel == treeNodeLevel.SUB_TOPIC) {
+            this.subTopicLink = environment.home_url + '/' + e.node.id;
             this.showFabric = true;
             let content = this.subTopicContent[e.node.id];
             if (!content) {
@@ -213,12 +220,6 @@ export class StoryComponent extends BaseComponent implements OnInit {
     subTopicContent: any = {};
 
     onNodeUnselected(e: NodeEvent) {
-        alert('ok');
-        let nodeLevel = this.getLevelOfNode(e.node);
-        console.log('unselected from node level: ' + nodeLevel);
-        if (nodeLevel == treeNodeLevel.SUB_TOPIC) {
-            this.subTopicContent[e.node.id] = this.getJsonFromCanvas(this.fabricComponent.canvas);
-        }
     }
 
     buildBookEntityFromModel(treeModel: TreeModel): any {
@@ -233,16 +234,19 @@ export class StoryComponent extends BaseComponent implements OnInit {
         for (let chapterModel of treeModel.children) {
             let chapterEntity: any = {};
             chapterEntity.name = chapterModel.value;
+            chapterEntity.id = chapterModel.id;
             bookEntity.chapterEntityList.push(chapterEntity);
             chapterEntity.topicEntityList = [];
             for (let topicModel of chapterModel.children) {
                 let topicEntity: any = {};
                 topicEntity.name = topicModel.value;
+                topicEntity.id = topicModel.id;
                 chapterEntity.topicEntityList.push(topicEntity);
                 topicEntity.subTopicEntityList = [];
                 for (let subTopicModel of topicModel.children) {
                     let subTopicEntity: any = {};
                     subTopicEntity.name = subTopicModel.value;
+                    subTopicEntity.id = subTopicEntity.id;
                     subTopicEntity.content = this.subTopicContent[subTopicModel.id];
                     topicEntity.subTopicEntityList.push(subTopicEntity);
                 }
@@ -254,8 +258,8 @@ export class StoryComponent extends BaseComponent implements OnInit {
     }
 
     saveOrUpdateBook() {
-        console.log('node before: ' + this.prevNode.id);
-        this.subTopicContent[this.prevNode.id]  = this.getJsonFromCanvas(this.fabricComponent.canvas);
+        console.log('node before: ' + this.prevNode.toTreeModel().nodeId);
+        this.subTopicContent[this.prevNode.toTreeModel().nodeId]  = this.getJsonFromCanvas(this.fabricComponent.canvas);
         
         let bookEntity: any = this.buildBookEntityFromModel(this.bookTree.getController().toTreeModel());
         console.log('save book: ' + JSON.stringify(bookEntity));
