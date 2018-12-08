@@ -23,7 +23,7 @@
                 <section>
                     <label>Password: </label>
                     <label class="input"> <i class="icon-append fa fa-lock"></i>
-                        <input [(ngModel)]="user.password" type="password" name="password" placeholder="Password"
+                        <input  [(ngModel)]="user.password" type="password" name="password" placeholder="Password"
                                id="password">
                         <b class="tooltip tooltip-bottom-right">Don't forget your password</b> </label>
                 </section>
@@ -65,7 +65,7 @@
                     <label>Confirm Password: </label>
                     <label class="input"> <i class="icon-append fa fa-lock"></i>
                         <input [(ngModel)]="user.passwordConfirm" type="password" name="passwordConfirm"
-                               placeholder="Confirm password">
+                               placeholder="Confirm password" id="confirmPass">
                         <b class="tooltip tooltip-bottom-right">Don't forget your password</b> </label>
                 </section>
             </div>
@@ -115,7 +115,7 @@
         </fieldset>
         <footer>
             <button *ngIf="!isSave()" (click)="verifyEmail()" class="btn btn-success btn-sm" style="margin-right: 20px">
-            Verify Email <i class="fa fa-mail-forward"></i>
+            Verify Email <i class="fa fa-envelope-o"></i>
         </button>
 
         <button *ngIf="!isSave()" (click)="connectFacebook()" class="btn btn-primary btn-sm" style="margin-right: 20px">

@@ -50,7 +50,7 @@ export class UserFormComponent extends BaseComponent implements OnInit {
     header: string = '';
 
     ngOnInit() {
-        console.log('Component type: ' + this.type);
+        // console.log('Component type: ' + this.type);
         if (this.isSave()) {
             this.header = 'Registration';
         } else {
@@ -87,7 +87,7 @@ export class UserFormComponent extends BaseComponent implements OnInit {
             return;
         }
         this.us.register(this.user).subscribe(response => {
-            console.log('res: ' + JSON.stringify(response));
+            // console.log('res: ' + JSON.stringify(response));
             var registerResult = response.success;
             if (registerResult == true) {
                 this.successAlert('Register success!');
@@ -113,10 +113,12 @@ export class UserFormComponent extends BaseComponent implements OnInit {
         }
 
         this.us.update(this.user).subscribe(response => {
-            console.log('res: ' + JSON.stringify(response));
+            // console.log('res: ' + JSON.stringify(response));
             var updateResult = response.success;
             if (updateResult == true) {
                 this.successAlert('Update user success!');
+                // location.reload();
+                this.resetChangePassForm();
             } else {
                 this.errorAlert(response.exceptionMessage);
             }
@@ -124,6 +126,26 @@ export class UserFormComponent extends BaseComponent implements OnInit {
         }, error => {
             this.errorAlert(error.message);
         })
+
+    }
+
+    resetChangePassForm() {
+        (<HTMLInputElement>document.getElementById('password')).value = '';
+        (<HTMLInputElement>document.getElementById('newPassword')).value = '';
+        (<HTMLInputElement>document.getElementById('confirmPass')).value = '';
+        (<HTMLInputElement>document.getElementById('ChangePassWordDiv')).style.display = "none";
+
+    }
+
+    doChangePass()  {
+        // $(".ChangePassWordDiv").css("visibility", "visible");
+        // document.getElementById('ChangePassWordDiv').style.display='inline';
+        var x = document.getElementById("ChangePassWordDiv");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
 
     }
 
@@ -145,18 +167,7 @@ export class UserFormComponent extends BaseComponent implements OnInit {
         return (this.type == this.compType.SAVE);
     }
 
-    doChangePass()  {
-        // $(".ChangePassWordDiv").css("visibility", "visible");
-        console.log("show change pass")
-        // document.getElementById('ChangePassWordDiv').style.display='inline';
-        var x = document.getElementById("ChangePassWordDiv");
-        if (x.style.display === "none") {
-            x.style.display = "block";
-        } else {
-            x.style.display = "none";
-        }
 
-    }
 
     verifyEmail() {
         if (this.confirm(`Do you want to send verify link to email ${this.user.userName}`)) {

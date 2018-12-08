@@ -149,8 +149,9 @@ public class UserService {
                 logger.info(EMAIL_SENT.replaceAll("@@user@@", userName));
                 return EMAIL_SENT.replaceAll("@@user@@", userName);
             }
+        } else{
+            logger.error("User not found");
         }
-        logger.error("User not found");
         return null;
     }
 
