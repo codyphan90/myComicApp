@@ -107,6 +107,10 @@ export class UserFormComponent extends BaseComponent implements OnInit {
 
     update(event) {
         event.preventDefault();
+        if (this.isChangePassword() && (this.user.newPassword != this.user.password)) {
+            this.errorAlert("New Password must be different to current Password!");
+            return;
+        }
         if (this.isChangePassword() && (this.user.newPassword != this.user.passwordConfirm)) {
             this.errorAlert("Password and confirm password not matched!");
             return;
@@ -117,7 +121,6 @@ export class UserFormComponent extends BaseComponent implements OnInit {
             var updateResult = response.success;
             if (updateResult == true) {
                 this.successAlert('Update user success!');
-                // location.reload();
                 this.resetChangePassForm();
             } else {
                 this.errorAlert(response.exceptionMessage);
@@ -204,20 +207,21 @@ export class UserFormComponent extends BaseComponent implements OnInit {
 
         this.fb.login(options)
             .then((response: LoginResponse) => {
-                console.log(response);
-                console.log("status: " + response.status);
+                // console.log(response);
+                // console.log("status: " + response.status);
                 if (response.status == 'connected') {
                     var token = response.authResponse.accessToken;
                     var facebookUserID = response.authResponse.userID;
-                    console.log('facebook id: ' + facebookUserID);
+                    // console.log('facebook id: ' + facebookUserID);
                     if (!this.user.facebookId) {
                         if (this.confirm("Do you want connect to this facebook user?")) {
                             this.us.connectFacebook(this.user.userName, facebookUserID).subscribe(response => {
-                                console.log('connect res: ' + JSON.stringify(response));
+                                // console.log('connect res: ' + JSON.stringify(response));
                                 var connectFacebookResult = response.success;
                                 if (connectFacebookResult == true) {
                                     this.successAlert('Connect facebook success!');
                                     this.user.facebookId = facebookUserID;
+                                    this.getListFriendFacebook();
                                 } else {
                                     this.errorAlert(response.exceptionMessage);
                                 }
@@ -226,8 +230,9 @@ export class UserFormComponent extends BaseComponent implements OnInit {
                                 this.errorAlert(error.message);
                             })
                         }
+                    } else {
+                        this.getListFriendFacebook();
                     }
-                    this.getListFriendFacebook();
                 }
             }).catch((error: any) => {
             this.errorAlert(error.message)
