@@ -114,7 +114,7 @@
             <!--</section>-->
         </fieldset>
         <footer>
-            <button *ngIf="!isSave()" (click)="verifyEmail()" class="btn btn-success btn-sm" style="margin-right: 20px">
+            <button *ngIf="!isSave() && !user.isActive" (click)="verifyEmail()" class="btn btn-success btn-sm" style="margin-right: 20px">
             Verify Email <i class="fa fa-envelope-o"></i>
         </button>
 
