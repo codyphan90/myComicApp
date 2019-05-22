@@ -4,6 +4,9 @@
 -- ------------------------------------------------------
 -- Server version	5.7.23
 
+CREATE DATABASE  IF NOT EXISTS `comic`;
+USE `comic`;
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -126,6 +129,22 @@ INSERT INTO `user_group` VALUES (1,'student',NULL),(2,'fresher',NULL),(3,'profes
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+--
+-- Table structure for table `topic`
+--
+
+DROP TABLE IF EXISTS `topic`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `topic` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `chapter_id` int(11) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
@@ -133,5 +152,38 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+--
+-- Table structure for table `chapter`
+--
+
+DROP TABLE IF EXISTS `chapter`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `chapter` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `book_id` int(11) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `sub_topic`
+--
+
+DROP TABLE IF EXISTS `sub_topic`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sub_topic` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `content` text,
+  `description` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `topic_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 -- Dump completed on 2018-11-13 23:45:01
